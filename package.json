@@ -1,0 +1,39 @@
+{
+  "name": "sirohi-point-platform",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "scripts": {
+    "dev": "npm run web",
+    "web": "npm run start --workspace=@sirohi/client -- --web",
+    "android": "npm run android --workspace=@sirohi/client",
+    "ios": "npm run ios --workspace=@sirohi/client",
+    "api": "npm run start:dev --workspace=@sirohi/api",
+    "build": "node scripts/build-all.mjs",
+    "build:packages": "node scripts/build-packages.mjs",
+    "build:api": "npm run build --workspace=@sirohi/api",
+    "build:web": "npm run export:web --workspace=@sirohi/client",
+    "typecheck": "node scripts/typecheck-all.mjs",
+    "test": "node scripts/test-all.mjs",
+    "test:artifact": "node --test tests/rendered-html.test.mjs",
+    "lint": "npm run lint --workspace=@sirohi/client && npm run lint --workspace=@sirohi/api"
+  },
+  "dependencies": {
+    "expo": "^57.0.20"
+  }
+}
