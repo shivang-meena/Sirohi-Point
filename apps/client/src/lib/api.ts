@@ -193,6 +193,30 @@ export function submitOrder(token: string, input: CreateOrderInput) {
   });
 }
 
+export interface PhonePePaymentInit {
+  merchantOrderId: string;
+  redirectUrl: string;
+}
+
+export interface PhonePePaymentVerification {
+  orderId: string;
+  merchantOrderId: string;
+  state: 'COMPLETED' | 'FAILED' | 'PENDING' | string;
+  amount: number;
+}
+
+export function initiatePhonePePayment(token: string, input: CreateOrderInput) {
+  return request<PhonePePaymentInit>('/orders/phonepe/initiate', {
+    token,
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export function verifyPhonePePayment(token: string, merchantOrderId: string) {
+  return request<PhonePePaymentVerification>(`/orders/phonepe/verify/${encodeURIComponent(merchantOrderId)}`, { token });
+}
+
 export function getOrders(token: string) {
   return request<OrderDetails[]>('/orders', { token });
 }

@@ -1,7 +1,7 @@
 import { PlatformRole, PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '../src/auth/password';
-import { fallbackCatalog } from '../src/catalog/catalog.data';
+import { sourceProductSeed } from './sirohipoint-products.seed';
 
 const prisma = new PrismaClient();
 const customerId = '00000000-0000-4000-8000-000000000001';
@@ -55,7 +55,7 @@ function slugify(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-function inferSubcategorySlug(product: (typeof fallbackCatalog)[number]) {
+function inferSubcategorySlug(product: (typeof sourceProductSeed)[number]) {
   const explicit = subcategorySlugByProductId[product.id];
   if (explicit) return explicit;
   const productSlug = product.slug.toLowerCase();
@@ -151,8 +151,11 @@ async function seed() {
     }
   }
 
-  for (const product of fallbackCatalog) {
-    const { stock, imageUrl, category: legacyCategory, ...record } = product;
+  // Keep historical orders intact while removing the previous catalog from the active storefront.
+  await prisma.product.updateMany({ data: { active: false } });
+
+  for (const product of sourceProductSeed) {
+    const { stock, imageUrl, category: legacyCategory, sourceUrl: _sourceUrl, ...record } = product;
     const categoryId = categoryIdBySlug.get(categorySlugByLegacyName[legacyCategory] ?? 'others');
     if (!categoryId) {
       throw new Error(`Missing seeded category for legacy category: ${legacyCategory}`);
@@ -204,7 +207,7 @@ async function seed() {
       audience: 'B2C' as const,
       title: 'Hardware deals',
       badge: 'SITE ESSENTIALS',
-      productId: 'hardware-pata-bolt',
+      productId: 'sirohipoint-006',
       ctaLabel: 'Shop now',
       backgroundColor: '#0B1F33',
       sortOrder: 0,
@@ -214,7 +217,7 @@ async function seed() {
       audience: 'B2C' as const,
       title: 'Electrical essentials',
       badge: 'POPULAR',
-      productId: 'electrical-modular-switch',
+      productId: 'sirohipoint-030',
       ctaLabel: 'View product',
       backgroundColor: '#123F75',
       sortOrder: 1,
@@ -224,7 +227,7 @@ async function seed() {
       audience: 'B2C' as const,
       title: 'Paint & finish',
       badge: 'PROJECT READY',
-      productId: 'paint-interior-emulsion',
+      productId: 'sirohipoint-186',
       ctaLabel: 'Shop paint',
       backgroundColor: '#26384B',
       sortOrder: 2,

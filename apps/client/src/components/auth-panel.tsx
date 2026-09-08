@@ -12,11 +12,14 @@ import {
 
 import { useAuth } from '@/state/auth-context';
 import { getRoleHomePath } from '@/lib/role-navigation';
+import { useCustomerStyles } from '@/theme/customer-theme';
 import { useThemedStyles } from '@/theme/theme-context';
 
-export function AuthPanel({ mode }: { mode: 'login' | 'signup' | 'admin' | 'business' | 'technician' }) {
+export function AuthPanel({ mode, returnToCart = false, variant = 'default' }: { mode: 'login' | 'signup' | 'admin' | 'business' | 'technician'; returnToCart?: boolean; variant?: 'default' | 'customer' }) {
   const router = useRouter();
-  const styles = useThemedStyles(createStyles);
+  const defaultStyles = useThemedStyles(createStyles);
+  const customerStyles = useCustomerStyles(createCustomerStyles);
+  const styles = variant === 'customer' ? customerStyles : defaultStyles;
   const { login, register, logout, busy } = useAuth();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -28,7 +31,7 @@ export function AuthPanel({ mode }: { mode: 'login' | 'signup' | 'admin' | 'busi
   const admin = mode === 'admin';
   const business = mode === 'business';
   const technician = mode === 'technician';
-
+  
   async function submit() {
     setError(null);
     if (signup && customerLocation.trim().length < 2) {
@@ -66,7 +69,7 @@ export function AuthPanel({ mode }: { mode: 'login' | 'signup' | 'admin' | 'busi
         setError('This account does not have customer shopping access. Use the correct role sign-in page.');
         return;
       }
-      router.replace(getRoleHomePath(user.role));
+      router.replace(returnToCart && user.role === 'CUSTOMER' ? '/cart' : getRoleHomePath(user.role));
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Unable to sign in');
     }
@@ -75,11 +78,11 @@ export function AuthPanel({ mode }: { mode: 'login' | 'signup' | 'admin' | 'busi
   return (
     <View style={styles.card}>
       <Text accessibilityRole="header" style={styles.title}>
-        {signup ? 'Create your customer account' : admin ? 'Admin sign in' : business ? 'Business sign in' : technician ? 'Technician sign in' : 'Customer sign in'}
+        {signup ? (variant === 'customer' ? 'Create your account' : 'Create your customer account') : admin ? 'Admin sign in' : business ? 'Business sign in' : technician ? 'Technician sign in' : (variant === 'customer' ? 'Welcome back' : 'Customer sign in')}
       </Text>
       <Text style={styles.copy}>
         {signup
-          ? 'Use your email, city or area, and a secure password.'
+          ? variant === 'customer' ? 'Save your details for faster checkout, easy order tracking, and a better way to shop.' : 'Use your email, city or area, and a secure password.'
           : admin
             ? 'Authorised Sirohi Point administrators only.'
             : business
@@ -89,15 +92,17 @@ export function AuthPanel({ mode }: { mode: 'login' | 'signup' | 'admin' | 'busi
               : 'Shop products, access orders, and checkout.'}
       </Text>
 
+      {variant === 'customer' ? <View style={styles.customerTrust}><Text style={styles.customerTrustText}>SECURE CUSTOMER ACCOUNT</Text><Text style={styles.customerTrustDot}>•</Text><Text style={styles.customerTrustText}>QUICK CHECKOUT</Text></View> : null}
+
       {signup ? (
         <>
-          <Field label="FULL NAME" value={name} onChangeText={setName} placeholder="Your name" styles={styles} />
-          <Field label="PHONE (OPTIONAL)" value={phone} onChangeText={setPhone} placeholder="+91" keyboardType="phone-pad" styles={styles} />
-          <Field label="CITY OR AREA" value={customerLocation} onChangeText={setCustomerLocation} placeholder="For example, Delhi" styles={styles} />
+          <Field label="FULL NAME" value={name} onChangeText={setName} placeholder="Your name" styles={styles as ReturnType<typeof createStyles>} />
+          <Field label="PHONE (OPTIONAL)" value={phone} onChangeText={setPhone} placeholder="+91" keyboardType="phone-pad" styles={styles as ReturnType<typeof createStyles>} />
+          <Field label="CITY OR AREA" value={customerLocation} onChangeText={setCustomerLocation} placeholder="For example, Delhi" styles={styles as ReturnType<typeof createStyles>} />
         </>
       ) : null}
-      <Field label="EMAIL" value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none" styles={styles} />
-      <Field label="PASSWORD" value={password} onChangeText={setPassword} placeholder="At least 8 characters" secureTextEntry autoCapitalize="none" styles={styles} />
+      <Field label="EMAIL" value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none" styles={styles as ReturnType<typeof createStyles>} />
+      <Field label="PASSWORD" value={password} onChangeText={setPassword} placeholder="At least 8 characters" secureTextEntry autoCapitalize="none" styles={styles as ReturnType<typeof createStyles>} />
 
       {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
 
@@ -111,7 +116,15 @@ export function AuthPanel({ mode }: { mode: 'login' | 'signup' | 'admin' | 'busi
       </Pressable>
 
       {!admin ? (
-        <Pressable onPress={() => router.replace((signup ? '/customer/login' : business ? '/business/signup' : technician ? '/technician/signup' : '/customer/signup') as never)} style={styles.switchButton}>
+        <Pressable
+          onPress={() => {
+            const path = signup ? '/customer/login' : business ? '/business/signup' : technician ? '/technician/signup' : '/customer/signup';
+            router.replace(((returnToCart && !business && !technician)
+              ? { pathname: path, params: { returnTo: 'cart' } }
+              : path) as never);
+          }}
+          style={styles.switchButton}
+        >
           <Text style={styles.switchText}>{signup ? 'Already registered? Sign in' : business ? 'Need a business account? Register' : technician ? 'New technician? Submit a registration request' : 'New customer? Create account'}</Text>
         </Pressable>
       ) : null}
@@ -189,4 +202,39 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   switchText: { color: colors.teal, fontSize: 12.5, fontWeight: '800' },
   pressed: { opacity: 0.76 },
   disabled: { opacity: 0.62 },
+});
+
+const createCustomerStyles = (colors: ThemeColors) => StyleSheet.create({
+  card: {
+    width: '100%',
+    maxWidth: 520,
+    alignSelf: 'center',
+    padding: 30,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    gap: spacing.md,
+    shadowColor: '#102237',
+    shadowOpacity: 0.1,
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 3,
+  },
+  title: { color: colors.cream, fontSize: 32, lineHeight: 38, fontWeight: '900', letterSpacing: -0.8 },
+  copy: { color: colors.muted, fontSize: 14, lineHeight: 21, marginBottom: spacing.xs },
+  field: { gap: 7 },
+  label: { color: colors.muted, fontSize: 10.5, fontWeight: '900', letterSpacing: 0.9 },
+  input: { minHeight: 52, paddingHorizontal: 16, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.surfaceSunken, color: colors.cream, fontSize: 15 },
+  placeholder: { color: colors.muted },
+  error: { color: colors.danger, backgroundColor: colors.copperTint, borderRadius: 10, padding: spacing.sm, fontSize: 12, lineHeight: 18 },
+  submit: { minHeight: 54, borderRadius: 12, backgroundColor: colors.cta, alignItems: 'center', justifyContent: 'center', marginTop: 4 },
+  submitText: { color: '#FFFFFF', fontSize: 15, fontWeight: '900' },
+  switchButton: { minHeight: 42, alignItems: 'center', justifyContent: 'center' },
+  switchText: { color: colors.teal, fontSize: 13, fontWeight: '800' },
+  pressed: { opacity: 0.76 },
+  disabled: { opacity: 0.62 },
+  customerTrust: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 2 },
+  customerTrustText: { color: colors.copper, fontSize: 10, fontWeight: '900', letterSpacing: 0.8 },
+  customerTrustDot: { color: colors.line, fontSize: 13 },
 });

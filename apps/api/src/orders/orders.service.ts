@@ -24,6 +24,22 @@ export class OrdersService {
     }
   }
 
+  async quote(input: CreateOrderInput, buyerSegment: PriceSegment): Promise<{ totalInPaise: number; itemCount: number }> {
+    if (new Set(input.items.map((item) => item.productId)).size !== input.items.length) throw new BadRequestException('Each product must appear only once');
+    const items = [];
+    for (const item of input.items) {
+      const product = await this.catalog.findOneForSegment(item.productId, buyerSegment);
+      const minimum = buyerSegment === 'B2B' ? product.minimumB2BQuantity ?? 1 : 1;
+      if (!Number.isInteger(item.quantity) || item.quantity < minimum || item.quantity > 100000) throw new BadRequestException(product.name + ': quantity must be a whole number between ' + minimum + ' and 100000');
+      const backorderedQuantity = Math.max(0, item.quantity - product.stock);
+      if (backorderedQuantity && (buyerSegment === 'B2C' || !product.allowB2BBackorder)) throw new BadRequestException(product.name + ' has only ' + product.stock + ' available');
+      items.push({ quantity: item.quantity, unitPriceInPaise: product.priceInPaise });
+    }
+    const deliveryChargeInPaise = buyerSegment === 'B2C' ? 5000 : 0;
+    const totalInPaise = items.reduce((sum, item) => sum + item.quantity * item.unitPriceInPaise, 0) + deliveryChargeInPaise;
+    return { totalInPaise, itemCount: items.reduce((sum, item) => sum + item.quantity, 0) };
+  }
+
   async create(input: CreateOrderInput, customerId: string, buyerSegment: PriceSegment): Promise<OrderSummary> {
     if (new Set(input.items.map((item) => item.productId)).size !== input.items.length) throw new BadRequestException('Each product must appear only once');
     const prepare = async (tx?: Prisma.TransactionClient) => {
@@ -44,7 +60,8 @@ export class OrdersService {
         const reserved = item.quantity - backorderedQuantity;
         if (tx && reserved) await tx.inventory.update({ where: { productId: item.productId }, data: { reserved: { increment: reserved }, available: { decrement: reserved } } });
       }
-      const totalInPaise = items.reduce((sum, item) => sum + item.quantity * item.unitPriceInPaise, 0);
+      const deliveryChargeInPaise = buyerSegment === 'B2C' ? 5000 : 0;
+      const totalInPaise = items.reduce((sum, item) => sum + item.quantity * item.unitPriceInPaise, 0) + deliveryChargeInPaise;
       if (totalInPaise > 2147483647) throw new BadRequestException('Order total is too large; please split it into smaller orders');
       return { items, totalInPaise, itemCount: items.reduce((sum, item) => sum + item.quantity, 0) };
     };

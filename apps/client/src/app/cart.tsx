@@ -3,12 +3,12 @@ import { calculateCartTotal, formatMoney } from '@sirohi/domain';
 import { useQuery } from '@tanstack/react-query';
 import { Redirect, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Linking, Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 
 import { AppShell } from '@/components/app-shell';
 import { CartQuantity } from '@/components/cart-quantity';
 import { ProductVisual } from '@/components/product-visual';
-import { getB2CProduct, submitOrder } from '@/lib/api';
+import { getB2CProduct, initiatePhonePePayment, submitOrder } from '@/lib/api';
 import { useAppState } from '@/state/app-context';
 import { useAuth } from '@/state/auth-context';
 import { useCustomerStyles as useThemedStyles } from '@/theme/customer-theme';
@@ -42,14 +42,14 @@ export default function CartScreen() {
   const subtotal = calculateCartTotal(lines);
   const baseDelivery = 0;
   const delivery = 0;
-  const total = subtotal + delivery;
+  const total = subtotal + 50;
   const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
 
   async function confirmOrder() {
     if (submitting) return;
     if (user?.role !== 'CUSTOMER' || !token) {
       showNotice('Sign in before placing your order.');
-      router.replace('/customer/login' as never);
+      router.replace({ pathname: '/customer/login', params: { returnTo: 'cart' } } as never);
       return;
     }
     if (address.trim().length < 10) {
@@ -58,11 +58,18 @@ export default function CartScreen() {
     }
     setSubmitting(true);
     try {
-      const summary = await submitOrder(token, {
+      const input = {
         deliveryAddress: address.trim(),
         paymentMethod,
         items: lines.map(({ product, quantity }) => ({ productId: product.id, quantity })),
-      });
+      };
+      if (paymentMethod === 'ONLINE') {
+        const payment = await initiatePhonePePayment(token, input);
+        if (Platform.OS === 'web' && typeof window !== 'undefined') window.location.assign(payment.redirectUrl);
+        else await Linking.openURL(payment.redirectUrl);
+        return;
+      }
+      const summary = await submitOrder(token, input);
       const order = placeOrder({
         totalInPaise: summary.totalInPaise,
         itemCount,
@@ -145,13 +152,13 @@ export default function CartScreen() {
               <View style={styles.fulfilmentCard}>
                 <Text style={styles.panelTitle}>Delivery options</Text>
                 <View style={styles.optionGrid}>
-                  <OptionCard
+                  {/* <OptionCard
                     title="Standard delivery"
                     copy="Timing confirmed for your address"
                     price={baseDelivery ? formatMoney(baseDelivery) : 'Free'}
                     selected={deliveryMode === 'standard'}
                     onPress={() => setDeliveryMode('standard')}
-                  />
+                  /> */}
 
                 </View>
                 <Text style={styles.fieldLabel}>DELIVERY ADDRESS</Text>
@@ -170,25 +177,26 @@ export default function CartScreen() {
             <View style={styles.summary}>
               <Text style={styles.summaryTitle}>Price details</Text>
               <SummaryRow label={`Subtotal (${itemCount} item${itemCount === 1 ? '' : 's'})`} value={formatMoney(subtotal)} />
-              <SummaryRow label={deliveryMode === 'express' ? 'Express delivery' : 'Delivery charges'} value={delivery ? formatMoney(delivery) : 'Free'} />
-
+              {/* <SummaryRow label={deliveryMode === 'express' ? 'Express delivery' : 'Delivery charges'} value={formatMoney(50)} /> */}
+   <SummaryRow label={deliveryMode === 'express' ? 'Express delivery' : 'Delivery charges'} value={formatMoney(50)} />
               <View style={styles.totalRow}><Text style={styles.totalLabel}>Total amount</Text><Text style={styles.totalValue}>{formatMoney(total)}</Text></View>
-              <Text style={styles.savingsNote}>Delivery timing is confirmed by admin. No delivery fee is included in this order.</Text>
+              <Text style={styles.savingsNote}>Delivery timing is confirmed by admin.</Text>
 
               <Text style={styles.fieldLabel}>PAYMENT METHOD</Text>
               <View style={styles.paymentRow}>
                 <Pressable onPress={() => setPaymentMethod('COD')} style={[styles.paymentButton, paymentMethod === 'COD' && styles.paymentActive]}>
                   <Text style={[styles.paymentText, paymentMethod === 'COD' && styles.paymentTextActive]}>Pay on delivery</Text>
                 </Pressable>
-                <Pressable disabled accessibilityState={{ disabled: true }} style={[styles.paymentButton, paymentMethod === 'ONLINE' && styles.paymentActive]}>
-                  <Text style={[styles.paymentText, paymentMethod === 'ONLINE' && styles.paymentTextActive]}>Online payment unavailable</Text>
+                <Pressable onPress={() => setPaymentMethod('ONLINE')} style={[styles.paymentButton, paymentMethod === 'ONLINE' && styles.paymentActive]}>
+                  <Text style={[styles.paymentText, paymentMethod === 'ONLINE' && styles.paymentTextActive]}>Pay with PhonePe</Text>
                 </Pressable>
               </View>
               <Pressable accessibilityRole="button" disabled={submitting} style={[styles.primaryButton, submitting && styles.disabled]} onPress={() => void confirmOrder()}>
-                {submitting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryText}>Place order</Text>}
+                {submitting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryText}>{paymentMethod === 'ONLINE' ? 'Continue to PhonePe' : 'Place order'}</Text>}
               </Pressable>
               <Text style={styles.secureNote}>GST invoice · Verified fulfilment · Support included</Text>
             </View>
+            
           </View>
         )}
       </View>
@@ -255,7 +263,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   fieldLabel: { color: colors.muted, fontSize: 11, fontWeight: '800', letterSpacing: 0.5, marginTop: spacing.xs },
   addressInput: { minHeight: 72, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surfaceSunken, color: colors.cream, fontSize: 13.5, textAlignVertical: 'top' },
   inputPlaceholder: { color: colors.muted },
-  summary: { flex: 0.65, minWidth: 0, padding: spacing.lg, gap: spacing.sm, borderWidth: 1, borderColor: colors.line, borderRadius: radius.md, backgroundColor: colors.surface },
+  summary: { flex: 0.65, minWidth: 0, minHeight: 470, padding: spacing.lg, paddingBottom: spacing.xl, gap: spacing.sm, borderWidth: 1, borderColor: colors.line, borderRadius: radius.md, backgroundColor: colors.surface },
   summaryTitle: { color: colors.cream, fontSize: 16, fontWeight: '900', marginBottom: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.line, paddingBottom: spacing.sm },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
   summaryLabel: { color: colors.muted, fontSize: 13 },
@@ -281,4 +289,3 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   confirmationLabel: { color: colors.muted, fontSize: 10, fontWeight: '800' },
   confirmationValue: { color: colors.cream, fontSize: 13, fontWeight: '900', marginTop: 3 },
 });
-
