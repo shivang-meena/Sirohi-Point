@@ -3,18 +3,73 @@ import { calculateCartTotal, formatMoney } from '@sirohi/domain';
 import { useQuery } from '@tanstack/react-query';
 import { Redirect, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Linking, Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 
 import { AppShell } from '@/components/app-shell';
 import { CartQuantity } from '@/components/cart-quantity';
 import { ProductVisual } from '@/components/product-visual';
-import { getB2CProduct, initiatePhonePePayment, submitOrder } from '@/lib/api';
+import { getB2CProduct, initiateRazorpayPayment, submitOrder, verifyRazorpayPayment } from '@/lib/api';
 import { useAppState } from '@/state/app-context';
 import { useAuth } from '@/state/auth-context';
 import { useCustomerStyles as useThemedStyles } from '@/theme/customer-theme';
 
 type DeliveryMode = 'standard' | 'express';
 type PaymentMethod = 'COD' | 'ONLINE';
+
+interface RazorpayCheckoutSuccess {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayCheckoutOptions {
+  key: string;
+  amount: number;
+  currency: 'INR';
+  name: string;
+  description: string;
+  order_id: string;
+  prefill?: { name?: string; email?: string; contact?: string };
+  theme?: { color: string };
+  handler(response: RazorpayCheckoutSuccess): void;
+  modal?: { ondismiss?: () => void };
+}
+
+interface RazorpayCheckoutInstance {
+  open(): void;
+  on(event: 'payment.failed', handler: () => void): void;
+}
+
+interface RazorpayCheckoutConstructor {
+  new (options: RazorpayCheckoutOptions): RazorpayCheckoutInstance;
+}
+
+declare global {
+  interface Window {
+    Razorpay?: RazorpayCheckoutConstructor;
+  }
+}
+
+function loadRazorpayCheckout(): Promise<void> {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return Promise.reject(new Error('Razorpay checkout is available only in a web browser.'));
+  if (window.Razorpay) return Promise.resolve();
+  const existing = document.getElementById('razorpay-checkout-js') as HTMLScriptElement | null;
+  if (existing) {
+    return new Promise((resolve, reject) => {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error('Unable to load Razorpay checkout.')), { once: true });
+    });
+  }
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.id = 'razorpay-checkout-js';
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Unable to load Razorpay checkout.'));
+    document.body.appendChild(script);
+  });
+}
 
 export default function CartScreen() {
   const router = useRouter();
@@ -45,6 +100,41 @@ export default function CartScreen() {
   const total = subtotal + 50;
   const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
 
+  async function completeRazorpayPayment(response: RazorpayCheckoutSuccess, razorpayOrderId: string) {
+    if (!token || response.razorpay_order_id !== razorpayOrderId) {
+      showNotice('Razorpay returned an invalid payment order.');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const payment = await verifyRazorpayPayment(token, {
+        razorpayOrderId,
+        razorpayPaymentId: response.razorpay_payment_id,
+        razorpaySignature: response.razorpay_signature,
+      });
+      if (payment.state !== 'COMPLETED' || !payment.orderId) throw new Error('Razorpay payment was not captured. Your cart is still available.');
+      const order = placeOrder({
+        totalInPaise: payment.amount,
+        itemCount,
+        deliveryMode,
+        paymentMethod: 'ONLINE',
+        address: address.trim(),
+        items: lines.map(({ product, quantity }) => ({
+          productId: product.id,
+          name: product.name,
+          quantity,
+          unitPriceInPaise: product.priceInPaise,
+        })),
+      }, payment.orderId);
+      setOrderId(order.id);
+      setOrdered(true);
+    } catch (reason) {
+      showNotice(reason instanceof Error ? reason.message : 'Unable to verify the Razorpay payment.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   async function confirmOrder() {
     if (submitting) return;
     if (user?.role !== 'CUSTOMER' || !token) {
@@ -64,9 +154,27 @@ export default function CartScreen() {
         items: lines.map(({ product, quantity }) => ({ productId: product.id, quantity })),
       };
       if (paymentMethod === 'ONLINE') {
-        const payment = await initiatePhonePePayment(token, input);
-        if (Platform.OS === 'web' && typeof window !== 'undefined') window.location.assign(payment.redirectUrl);
-        else await Linking.openURL(payment.redirectUrl);
+        if (Platform.OS !== 'web') throw new Error('Razorpay checkout is currently available on the web version of the app.');
+        const payment = await initiateRazorpayPayment(token, input);
+        await loadRazorpayCheckout();
+        if (!window.Razorpay) throw new Error('Razorpay checkout did not load.');
+        const checkout = new window.Razorpay({
+          key: payment.keyId,
+          amount: payment.amount,
+          currency: payment.currency,
+          name: 'Sirohi Point',
+          description: 'Customer order payment',
+          order_id: payment.razorpayOrderId,
+          prefill: { name: user.name, email: user.email, contact: user.phone ?? undefined },
+          theme: { color: '#0F766E' },
+          handler: (response) => void completeRazorpayPayment(response, payment.razorpayOrderId),
+          modal: { ondismiss: () => setSubmitting(false) },
+        });
+        checkout.on('payment.failed', () => {
+          setSubmitting(false);
+          showNotice('Razorpay payment failed. Your cart is still available.');
+        });
+        checkout.open();
         return;
       }
       const summary = await submitOrder(token, input);
@@ -188,11 +296,11 @@ export default function CartScreen() {
                   <Text style={[styles.paymentText, paymentMethod === 'COD' && styles.paymentTextActive]}>Pay on delivery</Text>
                 </Pressable>
                 <Pressable onPress={() => setPaymentMethod('ONLINE')} style={[styles.paymentButton, paymentMethod === 'ONLINE' && styles.paymentActive]}>
-                  <Text style={[styles.paymentText, paymentMethod === 'ONLINE' && styles.paymentTextActive]}>Pay with PhonePe</Text>
+                  <Text style={[styles.paymentText, paymentMethod === 'ONLINE' && styles.paymentTextActive]}>Pay with Razorpay</Text>
                 </Pressable>
               </View>
               <Pressable accessibilityRole="button" disabled={submitting} style={[styles.primaryButton, submitting && styles.disabled]} onPress={() => void confirmOrder()}>
-                {submitting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryText}>{paymentMethod === 'ONLINE' ? 'Continue to PhonePe' : 'Place order'}</Text>}
+                {submitting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryText}>{paymentMethod === 'ONLINE' ? 'Continue to Razorpay' : 'Place order'}</Text>}
               </Pressable>
               <Text style={styles.secureNote}>GST invoice · Verified fulfilment · Support included</Text>
             </View>

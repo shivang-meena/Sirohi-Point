@@ -193,28 +193,34 @@ export function submitOrder(token: string, input: CreateOrderInput) {
   });
 }
 
-export interface PhonePePaymentInit {
-  merchantOrderId: string;
-  redirectUrl: string;
+export interface RazorpayPaymentInit {
+  razorpayOrderId: string;
+  keyId: string;
+  amount: number;
+  currency: 'INR';
 }
 
-export interface PhonePePaymentVerification {
+export interface RazorpayPaymentVerification {
   orderId: string;
-  merchantOrderId: string;
-  state: 'COMPLETED' | 'FAILED' | 'PENDING' | string;
+  razorpayOrderId: string;
+  state: 'COMPLETED' | 'FAILED' | string;
   amount: number;
 }
 
-export function initiatePhonePePayment(token: string, input: CreateOrderInput) {
-  return request<PhonePePaymentInit>('/orders/phonepe/initiate', {
+export function initiateRazorpayPayment(token: string, input: CreateOrderInput) {
+  return request<RazorpayPaymentInit>('/orders/razorpay/initiate', {
     token,
     method: 'POST',
     body: JSON.stringify(input),
   });
 }
 
-export function verifyPhonePePayment(token: string, merchantOrderId: string) {
-  return request<PhonePePaymentVerification>(`/orders/phonepe/verify/${encodeURIComponent(merchantOrderId)}`, { token });
+export function verifyRazorpayPayment(token: string, input: { razorpayOrderId: string; razorpayPaymentId: string; razorpaySignature: string }) {
+  return request<RazorpayPaymentVerification>('/orders/razorpay/verify', {
+    token,
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
 }
 
 export function getOrders(token: string) {
