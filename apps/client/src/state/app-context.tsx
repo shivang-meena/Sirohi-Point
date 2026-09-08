@@ -110,10 +110,10 @@ export function AppStateProvider({ children }: PropsWithChildren) {
     wishlist,
     notice,
     addToCart(product, quantity = 1) {
-      if (!user || !['CUSTOMER', 'BUSINESS'].includes(user.role)) { setNotice('Sign in with a buyer account to add products.'); return; }
+      if (user && !['CUSTOMER', 'BUSINESS'].includes(user.role)) { setNotice('Sign in with a buyer account to add products.'); return; }
       const current = cartsRef.current;
       const nextQuantity = (current[cartScope]?.[product.id] ?? 0) + quantity;
-      const error = cartQuantityError(product, nextQuantity, user.role === 'BUSINESS');
+      const error = cartQuantityError(product, nextQuantity, user?.role === 'BUSINESS');
       if (error) { setNotice(error); return; }
       updateCarts({ ...current, [cartScope]: { ...current[cartScope], [product.id]: nextQuantity } });
       setNotice(`${quantity > 1 ? `${quantity} × ` : ''}${product.name} added to your cart.`);

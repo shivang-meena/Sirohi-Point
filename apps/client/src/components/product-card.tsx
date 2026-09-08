@@ -23,7 +23,7 @@ export function ProductCard({ product, width }: { product: Product; width: numbe
   const lowStock = product.stock > 0 && product.stock <= 10;
 
   function requireCustomer() {
-    if (user?.role === 'CUSTOMER') return true;
+    if (!user || user.role === 'CUSTOMER') return true;
     showNotice('Sign in as a customer to buy products.');
     router.replace('/customer/login' as never);
     return false;
