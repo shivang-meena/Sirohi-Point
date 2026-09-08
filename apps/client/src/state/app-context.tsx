@@ -50,6 +50,7 @@ interface AppContextValue {
 }
 
 const STORAGE_KEY = 'sirohi-point-customer-v1';
+const SHARED_CART_SCOPE = 'shared';
 const AppContext = createContext<AppContextValue | null>(null);
 
 function readStoredState(): StoredAppState | null {
@@ -58,10 +59,20 @@ function readStoredState(): StoredAppState | null {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<StoredAppState> & { cart?: Record<string, number> };
+    const storedCarts = parsed.carts && typeof parsed.carts === 'object'
+      ? parsed.carts
+      : { guest: parsed.cart ?? {} };
+    const sharedCart = Object.values(storedCarts).reduce<Record<string, number>>((merged, storedCart) => {
+      if (!storedCart || typeof storedCart !== 'object') return merged;
+      Object.entries(storedCart).forEach(([productId, quantity]) => {
+        if (typeof quantity === 'number' && quantity > 0) {
+          merged[productId] = (merged[productId] ?? 0) + quantity;
+        }
+      });
+      return merged;
+    }, {});
     return {
-      carts: parsed.carts && typeof parsed.carts === 'object'
-        ? parsed.carts
-        : { guest: parsed.cart ?? {} },
+      carts: { [SHARED_CART_SCOPE]: sharedCart },
       wishlist: Array.isArray(parsed.wishlist) ? parsed.wishlist : [],
     };
   } catch {
@@ -71,7 +82,7 @@ function readStoredState(): StoredAppState | null {
 
 export function AppStateProvider({ children }: PropsWithChildren) {
   const { user } = useAuth();
-  const cartScope = user ? `${user.id}:${user.role === 'BUSINESS' ? 'B2B' : 'B2C'}` : 'guest';
+  const cartScope = SHARED_CART_SCOPE;
   const [carts, setCarts] = useState<Record<string, Record<string, number>>>({});
   const cartsRef = useRef(carts);
   const updateCarts = (next: Record<string, Record<string, number>>) => { cartsRef.current = next; setCarts(next); };
