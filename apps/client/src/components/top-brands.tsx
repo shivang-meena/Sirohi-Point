@@ -7,13 +7,17 @@ import { useCustomerStyles } from '@/theme/customer-theme';
 type Brand = { name: string; mark: string; color: string; image?: number };
 
 const brands: Brand[] = [
-  { name: 'APL Apollo', mark: 'AP', color: '#0B315A' },
   { name: 'CERA', mark: 'CERA', color: '#0B315A', image: require('../../assets/images/brands/cera.png') },
-  { name: 'Diamond', mark: 'DIAMOND', color: '#2E647A' },
   { name: 'Dulux', mark: 'Dulux', color: '#0B315A', image: require('../../assets/images/brands/dulux.png') },
   { name: 'Elephant', mark: 'ELEPHANT', color: '#5C8E20', image: require('../../assets/images/brands/elephant.png') },
   { name: 'EROS', mark: 'EROS', color: '#1F2937', image: require('../../assets/images/brands/eros.png') },
   { name: 'Hitachi', mark: 'HITACHI', color: '#0B315A', image: require('../../assets/images/brands/hitachi.png') },
+  { name: 'Padmavati', mark: 'PADMAVATI', color: '#2E647A', image: require('../../assets/images/brands/padmavati logo.png') },
+  { name: 'Samsung', mark: 'SAMSUNG', color: '#0B315A', image: require('../../assets/images/brands/samsung logo.png') },
+  { name: 'Wrenchers', mark: 'WRENCHERS', color: '#4F46E5', image: require('../../assets/images/brands/wrenchers logo.png') },
+  { name: 'Yuvraj', mark: 'YUVRAJ', color: '#C33B2C', image: require('../../assets/images/brands/yuvrajlogo.png') },
+  { name: 'APL Apollo', mark: 'AP', color: '#0B315A' },
+  { name: 'Diamond', mark: 'DIAMOND', color: '#2E647A' },
   { name: 'JWS Paints', mark: 'JWS', color: '#C33B2C' },
   { name: 'Berger', mark: 'BERGER', color: '#E14D2A' },
   { name: 'Nerolac', mark: 'NEROLAC', color: '#D22F2F' },
@@ -25,10 +29,6 @@ const brands: Brand[] = [
   { name: 'Jaquar', mark: 'jaquar', color: '#263E6A' },
   { name: 'Supreme', mark: 'SUPREME', color: '#D8342B' },
   { name: 'Prince', mark: 'PRINCE', color: '#19744D' },
-  { name: 'Padmavati', mark: 'PADMAVATI', color: '#2E647A' },
-  { name: 'Samsung', mark: 'SAMSUNG', color: '#0B315A' },
-  { name: 'Wrenchers', mark: 'WRENCHERS', color: '#4F46E5' },
-  { name: 'Yuvraj', mark: 'YUVRAJ', color: '#2E647A' },
 ] as const;
 
 function BrandLogo({ brand }: { brand: Brand }) {

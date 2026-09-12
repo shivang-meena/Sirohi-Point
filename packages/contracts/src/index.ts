@@ -24,7 +24,7 @@ export const productCategories = [
   'Electrical',
   'Electronics',
   'Paint',
-  'Plumbing',
+  'PVC PIPE',
   'PVC & Plumbing',
   'Sanitary',
   'Others',

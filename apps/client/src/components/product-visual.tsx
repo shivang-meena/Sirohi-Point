@@ -52,6 +52,7 @@ function fallbackImageFor(product: Product): ImageSourcePropType {
       return require('../../assets/images/products/hardware-pata-bolt.png');
     case 'PVC & Plumbing':
     case 'Plumbing':
+    case 'PVC PIPE':
       return require('../../assets/images/products/pvc-elbow.png');
     default:
       return require('../../assets/images/products/paint-wall-primer.png');

@@ -63,7 +63,7 @@ export function CustomerPromotions({ products, banners }: { products: Product[];
   const savings = Math.max(0, ...savingsProducts.map(product => product.compareAtPriceInPaise && product.compareAtPriceInPaise > product.priceInPaise ? Math.floor((1 - product.priceInPaise / product.compareAtPriceInPaise) * 100) : 0));
   const title = banner?.title || offer.title;
   const copy = banner?.subtitle || offer.copy;
-  const ctaLabel = banner?.ctaLabel || (linkedProduct ? 'View product' : 'Shop ' + (category === 'PVC & Plumbing' ? 'plumbing' : category.toLowerCase()));
+  const ctaLabel = banner?.ctaLabel || (linkedProduct ? 'View product' : 'Shop ' + (category === 'PVC & Plumbing' ? 'pvc pipe' : category.toLowerCase()));
 
   function openCollection() {
     if (linkedProduct) router.push('/product/' + linkedProduct.id);
@@ -116,7 +116,7 @@ export function CustomerPromotions({ products, banners }: { products: Product[];
             style={({ pressed }) => [styles.offerPanel, compact && styles.offerPanelCompact, pressed && styles.pressed]}
           >
             <Text style={styles.panelKicker}>WHAT WE OFFER</Text>
-            <Text style={styles.panelCategory}>{category === 'PVC & Plumbing' ? 'Plumbing essentials' : category + ' essentials'}</Text>
+            <Text style={styles.panelCategory}>{category === 'PVC & Plumbing' ? 'PVC PIPE essentials' : category + ' essentials'}</Text>
             <Text style={styles.panelServices}>{offer.service}</Text>
             <View style={styles.deliveryPill}><Text style={styles.deliveryPillText}>FAST DELIVERY</Text></View>
             <Text style={styles.deliveryCopy}>{offer.delivery}</Text>

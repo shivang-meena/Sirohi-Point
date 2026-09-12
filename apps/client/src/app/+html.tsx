@@ -10,7 +10,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <meta name="theme-color" content="#131A22" />
         <meta name="color-scheme" content="light dark" />
-        <meta name="description" content="Shop hardware, electrical, electronics, paint, plumbing and sanitary products with cart, saved items, checkout and customer order tracking." />
+        <meta name="description" content="Shop hardware, electrical, electronics, paint, PVC pipe and sanitary products with cart, saved items, checkout and customer order tracking." />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Sirohi Point | Shop Products for Home and Business" />
         <meta property="og:description" content="Shop useful products, compare prices and stock, save favourites, check out and track orders in one customer marketplace." />

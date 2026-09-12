@@ -324,23 +324,49 @@ export default function CartScreen() {
                 <Pressable onPress={clearCart} style={styles.clearButton}><Text style={styles.clearText}>Clear cart</Text></Pressable>
               </View>
 
-              {lines.map(({ product, quantity }) => (
-                <View key={product.id} style={[styles.line, compactLine && styles.lineCompact]}>
-                  <ProductVisual product={product} compact />
-                  <View style={styles.lineBody}>
-                    <Text style={styles.lineBrand}>{product.brand}</Text>
-                    <Text style={styles.lineName}>{product.name}</Text>
-                    <View style={styles.lineStatus}>
-                      <View style={styles.stockDot} />
-                      <Text style={styles.lineMeta}>{product.stock} in stock</Text>
-                      <Text style={styles.lineMeta}>·</Text>
-                      <Text style={styles.lineMeta}>{product.serviceAvailable ? 'Installation available' : 'Material only'}</Text>
+              {lines.map(({ product, quantity }) =>
+                compactLine ? (
+                  <View key={product.id} style={styles.lineCard}>
+                    <View style={styles.lineCardTop}>
+                      <View style={styles.lineVisual}>
+                        <ProductVisual product={product} compact />
+                      </View>
+                      <View style={styles.lineCardInfo}>
+                        <Text style={styles.lineBrand} numberOfLines={1}>{product.brand}</Text>
+                        <Text style={styles.lineName} numberOfLines={2}>{product.name}</Text>
+                        <View style={styles.lineStatus}>
+                          <View style={styles.stockDot} />
+                          <Text style={styles.lineMeta}>{product.stock} in stock</Text>
+                          <Text style={styles.lineMeta}>·</Text>
+                          <Text style={styles.lineMeta}>{product.serviceAvailable ? 'Installation available' : 'Material only'}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.linePriceCompact} numberOfLines={1}>{formatMoney(product.priceInPaise * quantity)}</Text>
                     </View>
-<CartQuantity product={product} quantity={quantity} />
+                    <View style={styles.lineCardActions}>
+                      <CartQuantity product={product} quantity={quantity} />
+                    </View>
                   </View>
-                  <Text style={styles.linePrice}>{formatMoney(product.priceInPaise * quantity)}</Text>
-                </View>
-              ))}
+                ) : (
+                  <View key={product.id} style={styles.line}>
+                    <View style={styles.lineVisual}>
+                      <ProductVisual product={product} compact />
+                    </View>
+                    <View style={styles.lineBody}>
+                      <Text style={styles.lineBrand} numberOfLines={1}>{product.brand}</Text>
+                      <Text style={styles.lineName} numberOfLines={2}>{product.name}</Text>
+                      <View style={styles.lineStatus}>
+                        <View style={styles.stockDot} />
+                        <Text style={styles.lineMeta}>{product.stock} in stock</Text>
+                        <Text style={styles.lineMeta}>·</Text>
+                        <Text style={styles.lineMeta}>{product.serviceAvailable ? 'Installation available' : 'Material only'}</Text>
+                      </View>
+                      <CartQuantity product={product} quantity={quantity} />
+                    </View>
+                    <Text style={styles.linePrice} numberOfLines={1}>{formatMoney(product.priceInPaise * quantity)}</Text>
+                  </View>
+                ),
+              )}
 
               <View style={styles.fulfilmentCard}>
                 <View style={styles.deliveryHeader}><View><Text style={styles.panelTitle}>Delivery options</Text><Text style={styles.deliveryCopy}>Choose a saved address or add a new one.</Text></View>{savedAddresses.length > 0 && !showNewAddressForm ? <Pressable accessibilityRole="button" style={styles.addAddressButton} onPress={() => setAddingAddress(true)}><Text style={styles.addAddressText}>+ Add new address</Text></Pressable> : null}</View>
@@ -373,8 +399,7 @@ export default function CartScreen() {
             <View style={[styles.summary, desktop && styles.summaryDesktop, !desktop && styles.summaryMobile]}>
               <Text style={styles.summaryTitle}>Price details</Text>
               <SummaryRow label={`Subtotal (${itemCount} item${itemCount === 1 ? '' : 's'})`} value={formatMoney(subtotal)} />
-              {/* <SummaryRow label={deliveryMode === 'express' ? 'Express delivery' : 'Delivery charges'} value={formatMoney(50)} /> */}
-   <SummaryRow label={deliveryMode === 'express' ? 'Express delivery' : 'Delivery charges'} value={formatMoney(50)} />
+              <SummaryRow label={deliveryMode === 'express' ? 'Express delivery' : 'Delivery charges'} value={formatMoney(50)} />
               <View style={styles.totalRow}><Text style={styles.totalLabel}>Total amount</Text><Text style={styles.totalValue}>{formatMoney(total)}</Text></View>
               <Text style={styles.savingsNote}>Delivery timing is confirmed by admin.</Text>
 
@@ -392,7 +417,7 @@ export default function CartScreen() {
               </Pressable>
               <Text style={styles.secureNote}>GST invoice · Verified fulfilment · Support included</Text>
             </View>
-            
+
           </View>
         )}
       </View>
@@ -442,21 +467,31 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   content: { width: '100%', maxWidth: 1500, alignSelf: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.xl, gap: spacing.md },
   pageHeader: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
   pageTitle: { color: colors.cream, fontSize: 22, fontWeight: '900' },
-  columns: { width: '100%', gap: spacing.md },
+  columns: { width: '100%', minWidth: 0, gap: spacing.md },
   columnsDesktop: { flexDirection: 'row', alignItems: 'flex-start' },
-  lineList: { minWidth: 0, gap: spacing.sm },
-  lineListDesktop: { flex: 1.4 },
+  lineList: { minWidth: 0, flexShrink: 1, gap: spacing.sm },
+  lineListDesktop: { flex: 1.4, minWidth: 0 },
   listHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md, paddingBottom: spacing.xs },
   listCopy: { color: colors.muted, fontSize: 12.5 },
-  line: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, backgroundColor: colors.surface },
-  lineCompact: { flexWrap: 'wrap' },
-  lineBody: { flex: 1, minWidth: 150, gap: 4 },
+  line: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, backgroundColor: colors.surface, width: '100%', minWidth: 0, overflow: 'hidden' },
+  lineVisual: { width: 72, height: 72, borderRadius: radius.sm, overflow: 'hidden', flexShrink: 0, flexGrow: 0 },
+  lineBody: { flex: 1, flexShrink: 1, minWidth: 0, gap: 4 },
   lineBrand: { color: colors.teal, fontSize: 10.5, fontWeight: '800', textTransform: 'uppercase' },
-  lineName: { color: colors.cream, fontSize: 14.5, fontWeight: '700' },
+  lineName: { color: colors.cream, fontSize: 14.5, fontWeight: '700', flexShrink: 1 },
   lineStatus: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 4 },
   stockDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success },
   lineMeta: { color: colors.muted, fontSize: 11 },
-  linePrice: { color: colors.cream, fontSize: 15, fontWeight: '900' },
+  linePrice: { color: colors.cream, fontSize: 15, fontWeight: '900', flexShrink: 0, marginLeft: spacing.sm, textAlign: 'right' },
+  // Mobile-only card: image + name + price sit in a top row, and the
+  // quantity stepper/remove control gets its own full-width row below so it
+  // never gets squeezed for space (this was the cause of the broken mobile
+  // layout — the stepper was fighting the image and price for room on a
+  // single narrow row).
+  lineCard: { width: '100%', minWidth: 0, padding: spacing.md, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, backgroundColor: colors.surface, gap: spacing.sm, overflow: 'hidden' },
+  lineCardTop: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, width: '100%', minWidth: 0 },
+  lineCardInfo: { flex: 1, flexShrink: 1, minWidth: 0, gap: 4 },
+  linePriceCompact: { color: colors.cream, fontSize: 14, fontWeight: '900', flexShrink: 0, marginLeft: spacing.xs },
+  lineCardActions: { width: '100%' },
   stepper: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', marginTop: 2, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, overflow: 'hidden', backgroundColor: colors.surfaceSunken },
   stepButton: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceRaised },
   stepText: { color: colors.cream, fontSize: 16, fontWeight: '700' },
@@ -515,7 +550,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   addressInput: { minHeight: 72, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surfaceSunken, color: colors.cream, fontSize: 13.5, textAlignVertical: 'top' },
   inputPlaceholder: { color: colors.muted },
   summary: { minWidth: 0, minHeight: 470, padding: spacing.lg, paddingBottom: spacing.xl, gap: spacing.sm, borderWidth: 1, borderColor: colors.line, borderRadius: radius.md, backgroundColor: colors.surface },
-  summaryDesktop: { flex: 0.65 },
+  summaryDesktop: { flex: 0.65, minWidth: 300 },
   summaryMobile: { width: '100%', minHeight: 0, marginTop: spacing.md },
   summaryTitle: { color: colors.cream, fontSize: 16, fontWeight: '900', marginBottom: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.line, paddingBottom: spacing.sm },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },

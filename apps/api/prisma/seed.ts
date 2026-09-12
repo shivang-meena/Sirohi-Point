@@ -15,7 +15,7 @@ const taxonomy = [
   { name: 'Electronics', slug: 'electronics', subcategories: ['Iron', 'Juicer'] },
   { name: 'Paint', slug: 'paint', subcategories: ['Brush', 'MTO', 'Paint', 'Primer', 'Wall Paint', 'Wall Putty'] },
   {
-    name: 'Plumbing',
+    name: 'PVC PIPE',
     slug: 'plumbing',
     subcategories: [
       'Pvc Fitting',
@@ -37,6 +37,7 @@ const categorySlugByLegacyName: Record<string, string> = {
   Electronics: 'electronics',
   Paint: 'paint',
   Plumbing: 'plumbing',
+  'PVC PIPE': 'plumbing',
   'PVC & Plumbing': 'plumbing',
   Sanitary: 'sanitary',
 };

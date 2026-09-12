@@ -94,7 +94,7 @@ const businessModels = [
 
 const workshopProducts = [
   ["Architectural hardware", "Locks · hinges · handles", Wrench],
-  ["Plumbing systems", "Valves · pipes · fittings", Construction],
+  ["PVC PIPE systems", "Valves · pipes · fittings", Construction],
   ["Industrial tools", "Power · hand · safety", HardHat],
 ] as const;
 

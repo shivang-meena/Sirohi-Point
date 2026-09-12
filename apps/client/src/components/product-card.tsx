@@ -151,7 +151,7 @@ function getTechnicianService(product: Product) {
   if (product.category === 'Paint') {
     return { label: 'Painter visit', serviceType: technicianServiceTypes[5] };
   }
-  if (product.category === 'Plumbing' || product.category === 'PVC & Plumbing' || product.category === 'Sanitary') {
+  if (product.category === 'Plumbing' || product.category === 'PVC & Plumbing' || product.category === 'PVC PIPE' || product.category === 'Sanitary') {
     return { label: 'Plumber visit', serviceType: technicianServiceTypes[11] };
   }
   if (product.category === 'Hardware') {

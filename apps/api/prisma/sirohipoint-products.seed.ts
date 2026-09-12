@@ -55,7 +55,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-003",
     "name": "Coupler Socket Apl Apollo 1/2^",
     "slug": "coupler-socket-apl-apollo-1-2-3",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 500,
@@ -64,7 +64,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -79,7 +79,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-004",
     "name": "Coupler Socket Padmavati 1/2^",
     "slug": "coupler-socket-padmavati-1-2-4",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 500,
@@ -88,7 +88,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -103,7 +103,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-005",
     "name": "Coupler, Socket 3/4 Padmavati",
     "slug": "coupler-socket-3-4-padmavati-5",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 700,
@@ -112,7 +112,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "-18% OFF"
     },
@@ -175,7 +175,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-008",
     "name": "Elbow 3/4 Inch Padmavati",
     "slug": "elbow-3-4-inch-padmavati-8",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 900,
@@ -184,7 +184,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "-18% OFF"
     },
@@ -199,7 +199,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-009",
     "name": "Coupler Socket 3/4^ Padmavati",
     "slug": "coupler-socket-3-4-padmavati-9",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 800,
@@ -208,7 +208,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -247,7 +247,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-011",
     "name": "Upvc Elbow Apl Apollo 1/2",
     "slug": "upvc-elbow-apl-apollo-1-2-11",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 800,
@@ -256,7 +256,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -271,7 +271,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-012",
     "name": "Coupler Socket Apl Apollo 3/4^",
     "slug": "coupler-socket-apl-apollo-3-4-12",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 800,
@@ -280,7 +280,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -319,7 +319,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-014",
     "name": "Cpvc End Cap 3/4 Padmavati",
     "slug": "cpvc-end-cap-3-4-padmavati-14",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -328,7 +328,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -343,7 +343,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-015",
     "name": "Cpvc Elbow 45* 3/4 Padmvati",
     "slug": "cpvc-elbow-45-3-4-padmvati-15",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -352,7 +352,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -367,7 +367,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-016",
     "name": "Cpvc End Cap 1^ Padmavati",
     "slug": "cpvc-end-cap-1-padmavati-16",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -376,7 +376,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -391,7 +391,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-017",
     "name": "Upvc FTA 3/4 Pvc",
     "slug": "upvc-fta-3-4-pvc-17",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -400,7 +400,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -415,7 +415,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-018",
     "name": "Cpvc Elbow 3/4 Padmavati",
     "slug": "cpvc-elbow-3-4-padmavati-18",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -424,7 +424,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -439,7 +439,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-019",
     "name": "Upvc MTA Pvc 1^ Padmavati",
     "slug": "upvc-mta-pvc-1-padmavati-19",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -448,7 +448,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -463,7 +463,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-020",
     "name": "Upvc End CAP 3/4 Apl Apollo",
     "slug": "upvc-end-cap-3-4-apl-apollo-20",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 1000,
@@ -472,7 +472,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -487,7 +487,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-021",
     "name": "Upvc MTA 3/4 pvc Padmavati",
     "slug": "upvc-mta-3-4-pvc-padmavati-21",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -496,7 +496,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -511,7 +511,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-022",
     "name": "Upvc Elobow Apl Apollo 45* 3/4",
     "slug": "upvc-elobow-apl-apollo-45-3-4-22",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 1000,
@@ -520,7 +520,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -535,7 +535,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-023",
     "name": "Upvc Elbow Padmavati 1/2",
     "slug": "upvc-elbow-padmavati-1-2-23",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -544,7 +544,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -559,7 +559,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-024",
     "name": "Upvc Elbow Apl Apollo 3/4^",
     "slug": "upvc-elbow-apl-apollo-3-4-24",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 1000,
@@ -568,7 +568,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -583,7 +583,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-025",
     "name": "Upvc Tee Apl Apollo 1/2^",
     "slug": "upvc-tee-apl-apollo-1-2-25",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 1000,
@@ -592,7 +592,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -607,7 +607,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-026",
     "name": "Upvc Tee Padmavati  1/2^",
     "slug": "upvc-tee-padmavati-1-2-26",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -616,7 +616,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -631,7 +631,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-027",
     "name": "Coupler Socket Padmavati 1^",
     "slug": "coupler-socket-padmavati-1-27",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1000,
@@ -640,7 +640,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -655,7 +655,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-028",
     "name": "Upvc Elobow Padmavati 45* 3/4",
     "slug": "upvc-elobow-padmavati-45-3-4-28",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 1000,
@@ -664,7 +664,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -679,7 +679,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-029",
     "name": "Tee 3/4 Inch Padmavati",
     "slug": "tee-3-4-inch-padmavati-29",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1200,
@@ -688,7 +688,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "-18% OFF"
     },
@@ -727,7 +727,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-031",
     "name": "Coupler Socket 1^ Padmavati",
     "slug": "coupler-socket-1-padmavati-31",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1200,
@@ -736,7 +736,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -751,7 +751,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-032",
     "name": "Upvc FTA Pvc 1^ Padmavati",
     "slug": "upvc-fta-pvc-1-padmavati-32",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1200,
@@ -760,7 +760,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -775,7 +775,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-033",
     "name": "Coupler Socket 1^ Apl Apollo",
     "slug": "coupler-socket-1-apl-apollo-33",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "AsianPaints",
     "description": "",
     "priceInPaise": 1300,
@@ -784,7 +784,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "AsianPaints",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -799,7 +799,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-034",
     "name": "Cpvc Tee 3/4^ Padmavati",
     "slug": "cpvc-tee-3-4-padmavati-34",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1300,
@@ -808,7 +808,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -823,7 +823,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-035",
     "name": "Upvc Tee Apl Apollo 3/4^",
     "slug": "upvc-tee-apl-apollo-3-4-35",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 1400,
@@ -832,7 +832,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -847,7 +847,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-036",
     "name": "Upvc FTA Pvc 1 1/4^ Padmavati",
     "slug": "upvc-fta-pvc-1-1-4-padmavati-36",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1500,
@@ -856,7 +856,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1015,7 +1015,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-043",
     "name": "Upvc MTA Pvc 1 1/4^ Padmavati",
     "slug": "upvc-mta-pvc-1-1-4-padmavati-43",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1500,
@@ -1024,7 +1024,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1039,7 +1039,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-044",
     "name": "Upvc Elbow Padmavati 1^",
     "slug": "upvc-elbow-padmavati-1-44",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1500,
@@ -1048,7 +1048,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1063,7 +1063,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-045",
     "name": "Coupler Socket Padmavati 1 1/4^",
     "slug": "coupler-socket-padmavati-1-1-4-45",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1500,
@@ -1072,7 +1072,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1087,7 +1087,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-046",
     "name": "Upvc Elobow Padmavati 45* 1^",
     "slug": "upvc-elobow-padmavati-45-1-46",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1500,
@@ -1096,7 +1096,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1159,7 +1159,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-049",
     "name": "Cpvc Elbow 1 ^Padmavati",
     "slug": "cpvc-elbow-1-padmavati-49",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1700,
@@ -1168,7 +1168,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1183,7 +1183,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-050",
     "name": "Cpvc Elbow 45* 1^ Padmvati",
     "slug": "cpvc-elbow-45-1-padmvati-50",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 1800,
@@ -1192,7 +1192,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1231,7 +1231,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-052",
     "name": "Cpvc Elbow 1 ^ Apl Apollo",
     "slug": "cpvc-elbow-1-apl-apollo-52",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 1900,
@@ -1240,7 +1240,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1255,7 +1255,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-053",
     "name": "Cpvc Elbow 45* 1^ Apl Apollo",
     "slug": "cpvc-elbow-45-1-apl-apollo-53",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 1900,
@@ -1264,7 +1264,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1279,7 +1279,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-054",
     "name": "Upvc Tee Padmavati  1^",
     "slug": "upvc-tee-padmavati-1-54",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 2000,
@@ -1288,7 +1288,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1351,7 +1351,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-057",
     "name": "PVC Elbow Pn4 2^ Padmavati",
     "slug": "pvc-elbow-pn4-2-padmavati-57",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 2000,
@@ -1360,7 +1360,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1375,7 +1375,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-058",
     "name": "Upvc Union Padmavati 1/2^",
     "slug": "upvc-union-padmavati-1-2-58",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 2000,
@@ -1384,7 +1384,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1399,7 +1399,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-059",
     "name": "Coupler Socket 1 1/4 ^ Padmavati",
     "slug": "coupler-socket-1-1-4-padmavati-59",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 2000,
@@ -1408,7 +1408,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1447,7 +1447,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-061",
     "name": "Yuvraj Elbow 2^",
     "slug": "yuvraj-elbow-2-61",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 2000,
@@ -1456,7 +1456,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1495,7 +1495,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-063",
     "name": "Upvc Elbow Padmavati 1 1/4^",
     "slug": "upvc-elbow-padmavati-1-1-4-63",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 2200,
@@ -1504,7 +1504,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1519,7 +1519,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-064",
     "name": "Cpvc Tee 1^ Padmavati",
     "slug": "cpvc-tee-1-padmavati-64",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 2300,
@@ -1528,7 +1528,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1543,7 +1543,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-065",
     "name": "Cpvc Tee 1^ Apl Apollo",
     "slug": "cpvc-tee-1-apl-apollo-65",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 2400,
@@ -1552,7 +1552,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1567,7 +1567,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-066",
     "name": "PVC Coupler Socket 2^ Padmavati",
     "slug": "pvc-coupler-socket-2-padmavati-66",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 2500,
@@ -1576,7 +1576,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1615,7 +1615,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-068",
     "name": "Union 3/4 Padmavati",
     "slug": "union-3-4-padmavati-68",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 3000,
@@ -1624,7 +1624,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "-18% OFF"
     },
@@ -1663,7 +1663,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-070",
     "name": "PVC Coupler Socket 3^ Yuvraj",
     "slug": "pvc-coupler-socket-3-yuvraj-70",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 3000,
@@ -1672,7 +1672,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1711,7 +1711,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-072",
     "name": "Upvc Union Apl Apollo 3/4^",
     "slug": "upvc-union-apl-apollo-3-4-72",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 3000,
@@ -1720,7 +1720,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1783,7 +1783,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-075",
     "name": "Cpvc Tank Nipple 3/4^ Padmavati",
     "slug": "cpvc-tank-nipple-3-4-padmavati-75",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 3000,
@@ -1792,7 +1792,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1807,7 +1807,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-076",
     "name": "Yuvraj Elbow 3^ Eco",
     "slug": "yuvraj-elbow-3-eco-76",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 3000,
@@ -1816,7 +1816,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1831,7 +1831,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-077",
     "name": "Upvc Tee Padmavati  1 1/4^",
     "slug": "upvc-tee-padmavati-1-1-4-77",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 3000,
@@ -1840,7 +1840,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1855,7 +1855,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-078",
     "name": "Reducer Coupler Socket 3x2 Padmavati",
     "slug": "reducer-coupler-socket-3x2-padmavati-78",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 3000,
@@ -1864,7 +1864,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1879,7 +1879,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-079",
     "name": "Socket 3^ Yuvraj",
     "slug": "socket-3-yuvraj-79",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 3000,
@@ -1888,7 +1888,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -1975,7 +1975,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-083",
     "name": "PVC Elbow Eco 3^ Padmavati",
     "slug": "pvc-elbow-eco-3-padmavati-83",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 3000,
@@ -1984,7 +1984,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2047,7 +2047,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-086",
     "name": "Cpvc Union 3/4^ Padmavati",
     "slug": "cpvc-union-3-4-padmavati-86",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 3500,
@@ -2056,7 +2056,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2071,7 +2071,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-087",
     "name": "Upvc Union Padmavati 1^",
     "slug": "upvc-union-padmavati-1-87",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 3500,
@@ -2080,7 +2080,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2095,7 +2095,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-088",
     "name": "Cpvc Elbow 1 1/4 ^Padmavati",
     "slug": "cpvc-elbow-1-1-4-padmavati-88",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 3700,
@@ -2104,7 +2104,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2119,7 +2119,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-089",
     "name": "Reducer Coupler Socket 4x3 Yuvarj",
     "slug": "reducer-coupler-socket-4x3-yuvarj-89",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 4000,
@@ -2128,7 +2128,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2143,7 +2143,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-090",
     "name": "Upvc FTA Brass 3/4 x 1/2 Padmavati",
     "slug": "upvc-fta-brass-3-4-x-1-2-padmavati-90",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4000,
@@ -2152,7 +2152,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2167,7 +2167,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-091",
     "name": "Reducer Coupler Socket 4x2 Padmavati",
     "slug": "reducer-coupler-socket-4x2-padmavati-91",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4000,
@@ -2176,7 +2176,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2191,7 +2191,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-092",
     "name": "Upvc Step Over Bend 3/4 Padmavati",
     "slug": "upvc-step-over-bend-3-4-padmavati-92",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4000,
@@ -2200,7 +2200,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2215,7 +2215,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-093",
     "name": "PVC Coupler Socket 4^ Yuvraj",
     "slug": "pvc-coupler-socket-4-yuvraj-93",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 4000,
@@ -2224,7 +2224,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2239,7 +2239,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-094",
     "name": "Upvc Elbow Brass 1/2 x 1/2 Padmavati",
     "slug": "upvc-elbow-brass-1-2-x-1-2-padmavati-94",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4000,
@@ -2248,7 +2248,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2287,7 +2287,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-096",
     "name": "PVC Coupler Socket 3^ Padmavati",
     "slug": "pvc-coupler-socket-3-padmavati-96",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4000,
@@ -2296,7 +2296,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2335,7 +2335,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-098",
     "name": "Yuvraj Elbow 4^ Eco",
     "slug": "yuvraj-elbow-4-eco-98",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 4000,
@@ -2344,7 +2344,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2359,7 +2359,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-099",
     "name": "Cpvc Brass 3/4 x 1/2 Padmavati",
     "slug": "cpvc-brass-3-4-x-1-2-padmavati-99",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4200,
@@ -2368,7 +2368,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2407,7 +2407,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-101",
     "name": "Cpvc Tank Nipple 1^ Padmavati",
     "slug": "cpvc-tank-nipple-1-padmavati-101",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4500,
@@ -2416,7 +2416,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2431,7 +2431,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-102",
     "name": "Cpvc FTA 3/4 X 1/2 Brass Padmavati",
     "slug": "cpvc-fta-3-4-x-1-2-brass-padmavati-102",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4500,
@@ -2440,7 +2440,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2455,7 +2455,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-103",
     "name": "Upvc TEE Brass 1/2 x 1/2 Padmavati",
     "slug": "upvc-tee-brass-1-2-x-1-2-padmavati-103",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4500,
@@ -2464,7 +2464,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2479,7 +2479,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-104",
     "name": "Upvc Elbow Brass 3/4 x 1/2 Padmavati",
     "slug": "upvc-elbow-brass-3-4-x-1-2-padmavati-104",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4500,
@@ -2488,7 +2488,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2503,7 +2503,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-105",
     "name": "Upvc FTA Brass 3/4 x 1/2 Apl Apollo",
     "slug": "upvc-fta-brass-3-4-x-1-2-apl-apollo-105",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 4500,
@@ -2512,7 +2512,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2527,7 +2527,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-106",
     "name": "Upvc Step Over Bend 3/4 Apl Apollo Socket",
     "slug": "upvc-step-over-bend-3-4-apl-apollo-socket-106",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 4500,
@@ -2536,7 +2536,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2551,7 +2551,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-107",
     "name": "Cpvc Tee 1 1/4^ Padmavati",
     "slug": "cpvc-tee-1-1-4-padmavati-107",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 4700,
@@ -2560,7 +2560,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2599,7 +2599,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-109",
     "name": "Upvc TEE Brass 3/4 x 1/2 Padmavati",
     "slug": "upvc-tee-brass-3-4-x-1-2-padmavati-109",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2608,7 +2608,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2623,7 +2623,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-110",
     "name": "Upvc Elbow Brass 3/4 x 1/2 Apl Apollo",
     "slug": "upvc-elbow-brass-3-4-x-1-2-apl-apollo-110",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 5000,
@@ -2632,7 +2632,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2647,7 +2647,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-111",
     "name": "Upvc Ballvale Rn",
     "slug": "upvc-ballvale-rn-111",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 5000,
@@ -2656,7 +2656,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2671,7 +2671,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-112",
     "name": "Upvc MTA Brass Padmavati 3/4 x1/2",
     "slug": "upvc-mta-brass-padmavati-3-4-x1-2-112",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2680,7 +2680,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2695,7 +2695,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-113",
     "name": "Cpvc  Step Over Bend 3/4 Padmavati",
     "slug": "cpvc-step-over-bend-3-4-padmavati-113",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2704,7 +2704,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2719,7 +2719,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-114",
     "name": "Socket 4^ Yuvraj",
     "slug": "socket-4-yuvraj-114",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 5000,
@@ -2728,7 +2728,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2743,7 +2743,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-115",
     "name": "Yuvraj TEE 4^ Eco",
     "slug": "yuvraj-tee-4-eco-115",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 5000,
@@ -2752,7 +2752,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2767,7 +2767,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-116",
     "name": "Cpvc Tank Nipple 1^ Apl Apollo",
     "slug": "cpvc-tank-nipple-1-apl-apollo-116",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 5000,
@@ -2776,7 +2776,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2791,7 +2791,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-117",
     "name": "Cpvc FTA 1 x 1/2 Brass Padmavati",
     "slug": "cpvc-fta-1-x-1-2-brass-padmavati-117",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2800,7 +2800,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2815,7 +2815,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-118",
     "name": "Cpvc Union 1^ Padmavati",
     "slug": "cpvc-union-1-padmavati-118",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2824,7 +2824,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2863,7 +2863,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-120",
     "name": "PVC Coupler Socket 4^ Padmavati",
     "slug": "pvc-coupler-socket-4-padmavati-120",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2872,7 +2872,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2887,7 +2887,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-121",
     "name": "Upvc Union Padmavati 1 1/4^",
     "slug": "upvc-union-padmavati-1-1-4-121",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2896,7 +2896,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2911,7 +2911,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-122",
     "name": "Reducer Coupler Socket 4x3 Padmavati",
     "slug": "reducer-coupler-socket-4x3-padmavati-122",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2920,7 +2920,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -2935,7 +2935,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-123",
     "name": "PVC Elbow Eco 4^ Padmavati",
     "slug": "pvc-elbow-eco-4-padmavati-123",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5000,
@@ -2944,7 +2944,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3007,7 +3007,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-126",
     "name": "Upvc TEE Brass 3/4 x 1/2 Apl Apollo",
     "slug": "upvc-tee-brass-3-4-x-1-2-apl-apollo-126",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 5200,
@@ -3016,7 +3016,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3031,7 +3031,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-127",
     "name": "Cpvc Union 1^ Apl Apollo",
     "slug": "cpvc-union-1-apl-apollo-127",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 5500,
@@ -3040,7 +3040,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3055,7 +3055,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-128",
     "name": "Cpvc FTA 1 x 1/2 Brass Apl Apollo",
     "slug": "cpvc-fta-1-x-1-2-brass-apl-apollo-128",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 5500,
@@ -3064,7 +3064,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3079,7 +3079,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-129",
     "name": "Cpvc MTA 3/4 X1/2 Brass Padmavati",
     "slug": "cpvc-mta-3-4-x1-2-brass-padmavati-129",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5500,
@@ -3088,7 +3088,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3103,7 +3103,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-130",
     "name": "Upvc FTA Brass 3/4 x 3/4 Apl Apollo",
     "slug": "upvc-fta-brass-3-4-x-3-4-apl-apollo-130",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 5500,
@@ -3112,7 +3112,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3127,7 +3127,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-131",
     "name": "Cpvc MTA 3/4 X1/2 Brass Padmavati",
     "slug": "cpvc-mta-3-4-x1-2-brass-padmavati-131",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5500,
@@ -3136,7 +3136,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3151,7 +3151,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-132",
     "name": "Cpvc Brass 1 x 1/2 Padmavati",
     "slug": "cpvc-brass-1-x-1-2-padmavati-132",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 5500,
@@ -3160,7 +3160,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3175,7 +3175,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-133",
     "name": "Cpvc Brass 1 x 1/2 Apl Apollo",
     "slug": "cpvc-brass-1-x-1-2-apl-apollo-133",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 5800,
@@ -3184,7 +3184,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3295,7 +3295,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-138",
     "name": "Upvc Elbow Brass 3/4 x 3/4 Apl Apollo",
     "slug": "upvc-elbow-brass-3-4-x-3-4-apl-apollo-138",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 6000,
@@ -3304,7 +3304,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3367,7 +3367,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-141",
     "name": "Cpvc Tank Nipple 1 1/4^ Padmavati",
     "slug": "cpvc-tank-nipple-1-1-4-padmavati-141",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 6000,
@@ -3376,7 +3376,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3391,7 +3391,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-142",
     "name": "Cpvc FTA 1 x 3/4 Brass Padmavati",
     "slug": "cpvc-fta-1-x-3-4-brass-padmavati-142",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 6500,
@@ -3400,7 +3400,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3463,7 +3463,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-145",
     "name": "Cpvc FTA 3/4 X 3/4 Brass Padmavati",
     "slug": "cpvc-fta-3-4-x-3-4-brass-padmavati-145",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 7000,
@@ -3472,7 +3472,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3487,7 +3487,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-146",
     "name": "Cpvc  Step Over Bend 1^  Padmavati",
     "slug": "cpvc-step-over-bend-1-padmavati-146",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 7000,
@@ -3496,7 +3496,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3511,7 +3511,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-147",
     "name": "Cpvc MTA 1 x1/2 Brass Padmavati",
     "slug": "cpvc-mta-1-x1-2-brass-padmavati-147",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 7000,
@@ -3520,7 +3520,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3535,7 +3535,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-148",
     "name": "PVC Coupler Socket 4^ Apl Apollo Havey 6kg",
     "slug": "pvc-coupler-socket-4-apl-apollo-havey-6kg-148",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 7000,
@@ -3544,7 +3544,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3559,7 +3559,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-149",
     "name": "Cpvc  Step Over Bend 1^ Apl Apollo",
     "slug": "cpvc-step-over-bend-1-apl-apollo-149",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 7500,
@@ -3568,7 +3568,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3607,7 +3607,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-151",
     "name": "Cpvc MTA 3/4 X3/4 Brass Padmavati",
     "slug": "cpvc-mta-3-4-x3-4-brass-padmavati-151",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 8000,
@@ -3616,7 +3616,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3631,7 +3631,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-152",
     "name": "Cpvc Union 1 1/4^ Padmavati",
     "slug": "cpvc-union-1-1-4-padmavati-152",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 8000,
@@ -3640,7 +3640,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3679,7 +3679,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-154",
     "name": "Upvc MTA Brass Apl Apollo 3/4 x 3/4",
     "slug": "upvc-mta-brass-apl-apollo-3-4-x-3-4-154",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 8500,
@@ -3688,7 +3688,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3727,7 +3727,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-156",
     "name": "Cpvc MTA 1 x 3/4 Brass Padmavati",
     "slug": "cpvc-mta-1-x-3-4-brass-padmavati-156",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 9000,
@@ -3736,7 +3736,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3751,7 +3751,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-157",
     "name": "PVC Coupler Socket 5^ Padmavati",
     "slug": "pvc-coupler-socket-5-padmavati-157",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 9000,
@@ -3760,7 +3760,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3775,7 +3775,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-158",
     "name": "Reducer Coupler Socket 4x5 Padmavati",
     "slug": "reducer-coupler-socket-4x5-padmavati-158",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 9000,
@@ -3784,7 +3784,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3823,7 +3823,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-160",
     "name": "Cpvc MTA 1 x 3/4 Brass Apl Apollo",
     "slug": "cpvc-mta-1-x-3-4-brass-apl-apollo-160",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 10000,
@@ -3832,7 +3832,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3871,7 +3871,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-162",
     "name": "Cpvc Ball Valve 3/4 Padmavati",
     "slug": "cpvc-ball-valve-3-4-padmavati-162",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 10000,
@@ -3880,7 +3880,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -3919,7 +3919,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-164",
     "name": "Cpvc Solvent 118ml Apollo",
     "slug": "cpvc-solvent-118ml-apollo-164",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 12000,
@@ -3928,7 +3928,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "-18% OFF"
     },
@@ -4015,7 +4015,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-168",
     "name": "First End Cap 200mm",
     "slug": "first-end-cap-200mm-168",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 12000,
@@ -4024,7 +4024,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4063,7 +4063,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-170",
     "name": "PVC Coupler Socket 6^ Padmavati",
     "slug": "pvc-coupler-socket-6-padmavati-170",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 13000,
@@ -4072,7 +4072,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4087,7 +4087,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-171",
     "name": "Cpvc Padmavati 3/4^ 11 SDR",
     "slug": "cpvc-padmavati-3-4-11-sdr-171",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 13000,
@@ -4096,7 +4096,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4111,7 +4111,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-172",
     "name": "Yuvraj Ptrap 110x 110mm Pvc",
     "slug": "yuvraj-ptrap-110x-110mm-pvc-172",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 13000,
@@ -4120,7 +4120,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4159,7 +4159,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-174",
     "name": "Upvc Pipe 1/2 SCH40 Padmavati",
     "slug": "upvc-pipe-1-2-sch40-padmavati-174",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 14000,
@@ -4168,7 +4168,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4231,7 +4231,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-177",
     "name": "Cpvc Ball Valve 1^ Padmavati",
     "slug": "cpvc-ball-valve-1-padmavati-177",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 15000,
@@ -4240,7 +4240,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4279,7 +4279,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-179",
     "name": "Yuvraj End Cap 225mm",
     "slug": "yuvraj-end-cap-225mm-179",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Yuvraj",
     "description": "",
     "priceInPaise": 15000,
@@ -4288,7 +4288,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Yuvraj",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4399,7 +4399,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-184",
     "name": "Cpvc Ball Valve  1^Apl Apollo",
     "slug": "cpvc-ball-valve-1-apl-apollo-184",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 16000,
@@ -4408,7 +4408,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4423,7 +4423,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-185",
     "name": "Upvc Pipe 1/2 SCH80 Padmavati",
     "slug": "upvc-pipe-1-2-sch80-padmavati-185",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 18000,
@@ -4432,7 +4432,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4495,7 +4495,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-188",
     "name": "Upvc Pipe 3/4 SCH40 Padmavati",
     "slug": "upvc-pipe-3-4-sch40-padmavati-188",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 20800,
@@ -4504,7 +4504,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4519,7 +4519,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-189",
     "name": "Cpvc Padmavati 1^ 11 SDR",
     "slug": "cpvc-padmavati-1-11-sdr-189",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 21000,
@@ -4528,7 +4528,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4567,7 +4567,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-191",
     "name": "Upvc Pipe 3/4 SCH40 Apl Apollo",
     "slug": "upvc-pipe-3-4-sch40-apl-apollo-191",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 23500,
@@ -4576,7 +4576,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4591,7 +4591,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-192",
     "name": "Cpvc Apl Apollo 1^ 11SDR",
     "slug": "cpvc-apl-apollo-1-11sdr-192",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 23500,
@@ -4600,7 +4600,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4639,7 +4639,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-194",
     "name": "Cpvc Ball Valve 1 1/4 Padmavati",
     "slug": "cpvc-ball-valve-1-1-4-padmavati-194",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 25000,
@@ -4648,7 +4648,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4735,7 +4735,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-198",
     "name": "Upvc Pipe 3/4 SCH80 Padmavati",
     "slug": "upvc-pipe-3-4-sch80-padmavati-198",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 26500,
@@ -4744,7 +4744,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4783,7 +4783,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-200",
     "name": "Upvc Pipe 3/4 SCH80 Apl Apollo",
     "slug": "upvc-pipe-3-4-sch80-apl-apollo-200",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Apl Apollo",
     "description": "",
     "priceInPaise": 30000,
@@ -4792,7 +4792,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Apl Apollo",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4879,7 +4879,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-204",
     "name": "Cpvc Padmavati 1 1/4^ 11 SDR",
     "slug": "cpvc-padmavati-1-1-4-11-sdr-204",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 35000,
@@ -4888,7 +4888,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -4999,7 +4999,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-209",
     "name": "Upvc Pipe 1 1/4 SCH40 Padmavati",
     "slug": "upvc-pipe-1-1-4-sch40-padmavati-209",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 42000,
@@ -5008,7 +5008,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -5023,7 +5023,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-210",
     "name": "Upvc Pipe 1^ SCH80 Padmavati",
     "slug": "upvc-pipe-1-sch80-padmavati-210",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Padmavati",
     "description": "",
     "priceInPaise": 42000,
@@ -5032,7 +5032,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Padmavati",
       "sourceDiscountLabel": "0% OFF"
     },
@@ -5719,7 +5719,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-239",
     "name": "PVC Pipes",
     "slug": "pvc-pipes-239",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 189500,
@@ -5728,7 +5728,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "5% OFF"
     },
@@ -5863,7 +5863,7 @@ export const sourceProductSeed = [
     "id": "sirohipoint-245",
     "name": "Yuvraj Water Tank 500LTR 3LYR White 10Y",
     "slug": "yuvraj-water-tank-500ltr-3lyr-white-10y-245",
-    "category": "Plumbing",
+    "category": "PVC PIPE",
     "brand": "Other",
     "description": "",
     "priceInPaise": 275000,
@@ -5872,7 +5872,7 @@ export const sourceProductSeed = [
     "minimumB2BQuantity": 1,
     "allowB2BBackorder": false,
     "specifications": {
-      "sourceCategory": "Plumbing",
+      "sourceCategory": "PVC PIPE",
       "sourceBrand": "Other",
       "sourceDiscountLabel": "0% OFF"
     },

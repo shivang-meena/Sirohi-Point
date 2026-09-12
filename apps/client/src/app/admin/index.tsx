@@ -4,11 +4,10 @@ import { radius, spacing, type ThemeColors } from '@sirohi/design-tokens';
 import { formatMoney } from '@sirohi/domain';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { useEffect, useState, type ComponentProps } from 'react';
-import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { useEffect, useMemo, useState, type ComponentProps } from 'react';
+import { ActivityIndicator, Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 
 import { ServiceOffersEditor } from '@/components/service-offers-editor';
-import { ProductVisual } from '@/components/product-visual';
 import {
   createAdminBanner,
   createAdminProduct,
@@ -43,7 +42,13 @@ import {
   type ServiceBookingRecord,
 } from '@/lib/api';
 import { useAuth } from '@/state/auth-context';
-import { useThemedStyles } from '@/theme/theme-context';
+import { useAppTheme } from '@/theme/theme-context';
+
+// NOTE: adjust this relative path if this file is moved.
+// Expected logo file at: apps/client/assets/images/products/sirohi-logo.png
+// (rename/place your uploaded logo file to that exact path, or change the
+// path below to match whatever filename you use).
+const sirohiLogo = require('./logo_sirohi.png');
 
 type AdminTab = 'overview' | 'products' | 'banners' | 'users' | 'orders' | 'services' | 'technicians' | 'businesses' | 'offers';
 const tabs: { key: AdminTab; label: string }[] = [
@@ -68,12 +73,15 @@ const emptyBanner = {
 export default function AdminScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const styles = useThemedStyles(createStyles);
+  const { colors } = useAppTheme();
   const { width } = useWindowDimensions();
+  const desktop = width >= 860;
+  const tablet = width >= 640 && width < 860;
+  const compact = width < 420;
+  const styles = useMemo(() => createStyles({ colors, desktop, tablet, compact }), [colors, desktop, tablet, compact]);
   const { user, token, hydrated, logout } = useAuth();
   const [tab, setTab] = useState<AdminTab>('overview');
   const [message, setMessage] = useState<string | null>(null);
-  const desktop = width >= 860;
   const authorised = user?.role === 'ADMIN' && Boolean(token);
 
   useEffect(() => {
@@ -102,8 +110,14 @@ export default function AdminScreen() {
   return (
     <View style={styles.page}>
       <View style={styles.topbar}>
-        <Pressable onPress={() => router.push('/')}><Text style={styles.brand}>SIROHI POINT <Text style={styles.brandAccent}>ADMIN</Text></Text></Pressable>
-        <View style={styles.topActions}><Text style={styles.adminName}>{user.name}</Text><Pressable style={styles.outlineButton} onPress={() => void logout().then(() => router.replace('/admin/login' as never))}><Text style={styles.outlineText}>Sign out</Text></Pressable></View>
+        <Pressable onPress={() => router.push('/')} style={styles.brandWrap}>
+          <Image source={sirohiLogo} style={styles.brandLogo} resizeMode="contain" />
+          <View style={styles.brandTextWrap}>
+            <Text numberOfLines={1} style={styles.brand}>SIROHI POINT<Text style={styles.brandDot}>.</Text></Text>
+            {!compact ? <Text numberOfLines={1} style={styles.brandTagline}>ADMIN PANEL</Text> : null}
+          </View>
+        </Pressable>
+        <View style={styles.topActions}>{desktop ? <Text numberOfLines={1} style={styles.adminName}>{user.name}</Text> : null}<Pressable style={styles.outlineButton} onPress={() => void logout().then(() => router.replace('/admin/login' as never))}><Text style={styles.outlineText}>Sign out</Text></Pressable></View>
       </View>
 
       <View style={[styles.workspace, desktop && styles.workspaceDesktop]}>
@@ -113,7 +127,7 @@ export default function AdminScreen() {
         </ScrollView>
 
         <ScrollView style={styles.main} contentContainerStyle={styles.mainContent} keyboardShouldPersistTaps="handled">
-          <View style={styles.titleRow}><View><Text style={styles.eyebrow}>ADMINISTRATION</Text><Text accessibilityRole="header" style={styles.title}>{tabs.find((item) => item.key === tab)?.label}</Text></View></View>
+          <View style={styles.titleRow}><View><Text accessibilityRole="header" style={styles.title}>{tabs.find((item) => item.key === tab)?.label}</Text></View></View>
           {message ? <Text accessibilityRole="alert" style={styles.message}>{message}</Text> : null}
 
           {tab === 'offers' ? <ServiceOffersEditor token={token!} /> : null}
@@ -288,6 +302,38 @@ function Metric({ value, label, styles }: { value: number; label: string; styles
   return <View style={styles.metric}><Text style={styles.metricValue}>{value}</Text><Text style={styles.metricLabel}>{label}</Text></View>;
 }
 
+function ProductRow({ product, onEdit, onRemove, busy, styles }: { product: AdminProduct; onEdit(): void; onRemove(): void; busy: boolean; styles: Styles }) {
+  const b2cPriceInPaise = product.b2cPriceInPaise ?? product.priceInPaise;
+  return (
+    <View style={styles.productRow}>
+      <View style={styles.productThumbWrap}>
+        {product.imageUrl ? (
+          <Image source={{ uri: product.imageUrl }} style={styles.productThumb} resizeMode="cover" />
+        ) : (
+          <View style={[styles.productThumb, styles.productThumbEmpty]}><Text style={styles.productThumbEmptyText}>No image</Text></View>
+        )}
+      </View>
+      <View style={styles.productDetails}>
+        <Text numberOfLines={1} style={styles.rowTitle}>{product.name}</Text>
+        <Text style={styles.rowMeta}>{product.category} · {product.brand}</Text>
+        <Text style={styles.rowMeta}>
+          B2C {formatMoney(b2cPriceInPaise)}
+          {product.b2bPriceInPaise ? ` · B2B ${formatMoney(product.b2bPriceInPaise)}${product.minimumB2BQuantity ? ` (min ${product.minimumB2BQuantity})` : ''}` : ''}
+          {product.compareAtPriceInPaise ? ` · MRP ${formatMoney(product.compareAtPriceInPaise)}` : ''}
+        </Text>
+        <Text style={styles.rowMeta}>Stock: {product.stock}{product.badge ? ` · Badge: ${product.badge}` : ''}</Text>
+        {product.description ? <Text numberOfLines={2} style={styles.rowMeta}>{product.description}</Text> : null}
+        <Text style={styles.rowMeta}>{product.serviceAvailable ? 'Installation available' : 'No installation'}{product.allowB2BBackorder ? ' · B2B backorder allowed' : ''}</Text>
+        <Text style={[styles.stateText, !product.active && styles.dangerText]}>{product.active ? 'LIVE' : 'REMOVED'}</Text>
+      </View>
+      <View style={styles.rowActions}>
+        <Action label="Edit" small secondary onPress={onEdit} styles={styles} />
+        <Action label="Remove" small danger onPress={onRemove} disabled={!product.active || busy} styles={styles} />
+      </View>
+    </View>
+  );
+}
+
 function ProductsPanel({ token, products, loading, onChanged, setMessage, styles }: { token: string; products: AdminProduct[]; loading: boolean; onChanged(): Promise<void>; setMessage(value: string): void; styles: Styles }) {
   const [form, setForm] = useState(emptyProduct);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -337,12 +383,14 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
         <Field label="Badge" value={form.badge} onChangeText={(badge) => setForm({ ...form, badge })} styles={styles} />
       </View>
       <Text style={styles.fieldLabel}>Category</Text><View style={styles.choiceRow}>{productCategories.map((category) => <Choice key={category} label={category} selected={form.category === category} onPress={() => setForm({ ...form, category })} styles={styles} />)}</View>
-      <Field label="Description" value={form.description} multiline onChangeText={(description) => setForm({ ...form, description })} styles={styles} />
-      <Field label="Product image URL" value={form.imageUrl} onChangeText={(imageUrl) => setForm({ ...form, imageUrl })} styles={styles} />
+      <View style={styles.formGrid}>
+        <Field label="Description" value={form.description} multiline onChangeText={(description) => setForm({ ...form, description })} styles={styles} wide />
+        <Field label="Product image URL" value={form.imageUrl} onChangeText={(imageUrl) => setForm({ ...form, imageUrl })} styles={styles} wide />
+      </View>
       <View style={styles.choiceRow}><Choice label="Upload image" selected={false} onPress={() => void uploadImage()} styles={styles} /><Choice label="Installation available" selected={form.serviceAvailable} onPress={() => setForm({ ...form, serviceAvailable: !form.serviceAvailable })} styles={styles} /><Choice label="B2B backorder allowed" selected={form.allowB2BBackorder} onPress={() => setForm({ ...form, allowB2BBackorder: !form.allowB2BBackorder })} styles={styles} /><Choice label="Visible in store" selected={form.active} onPress={() => setForm({ ...form, active: !form.active })} styles={styles} /></View>
       <View style={styles.actionRow}><Action label={editingId ? 'Save changes' : 'Add product'} onPress={() => void save()} busy={busy} styles={styles} />{editingId ? <Action label="Cancel" secondary onPress={() => { setEditingId(null); setForm(emptyProduct); }} styles={styles} /> : null}</View>
     </Editor>
-    <Editor title={`Products (${products.length})`} styles={styles}>{loading ? <Loading styles={styles} /> : products.map((product) => <View key={product.id} style={styles.dataRow}><ProductVisual product={product} compact /><View style={styles.rowBody}><Text style={styles.rowTitle}>{product.name}</Text><Text style={styles.rowMeta}>{product.brand} · {formatMoney(product.priceInPaise)} · {product.stock} in stock</Text><Text style={[styles.stateText, !product.active && styles.dangerText]}>{product.active ? 'LIVE' : 'REMOVED'}</Text></View><View style={styles.rowActions}><Action label="Edit" small secondary onPress={() => edit(product)} styles={styles} /><Action label="Remove" small danger onPress={() => void remove(product.id)} disabled={!product.active || busy} styles={styles} /></View></View>)}</Editor>
+    <Editor title={`Products (${products.length})`} styles={styles}>{loading ? <Loading styles={styles} /> : products.map((product) => <ProductRow key={product.id} product={product} onEdit={() => edit(product)} onRemove={() => void remove(product.id)} busy={busy} styles={styles} />)}</Editor>
   </View>;
 }
 
@@ -362,8 +410,10 @@ function BannersPanel({ token, banners, products, loading, onChanged, setMessage
   return <View style={styles.stack}>
     <Editor title={editingId ? 'Edit home banner' : 'Add home banner'} styles={styles}>
       <View style={styles.formGrid}><Field label="Banner title" value={form.title} onChangeText={(title) => setForm({ ...form, title })} styles={styles} /><Field label="Badge" value={form.badge} onChangeText={(badge) => setForm({ ...form, badge })} styles={styles} /><Field label="Button label" value={form.ctaLabel} onChangeText={(ctaLabel) => setForm({ ...form, ctaLabel })} styles={styles} /><Field label="Background (#RRGGBB)" value={form.backgroundColor} onChangeText={(backgroundColor) => setForm({ ...form, backgroundColor })} styles={styles} /><Field label="Order" value={form.sortOrder} keyboardType="number-pad" onChangeText={(sortOrder) => setForm({ ...form, sortOrder })} styles={styles} /></View>
-      <Field label="Short subtitle (optional)" value={form.subtitle} onChangeText={(subtitle) => setForm({ ...form, subtitle })} styles={styles} />
-      <Field label="Banner image URL" value={form.imageUrl} onChangeText={(imageUrl) => setForm({ ...form, imageUrl })} styles={styles} />
+      <View style={styles.formGrid}>
+        <Field label="Short subtitle (optional)" value={form.subtitle} onChangeText={(subtitle) => setForm({ ...form, subtitle })} styles={styles} wide />
+        <Field label="Banner image URL" value={form.imageUrl} onChangeText={(imageUrl) => setForm({ ...form, imageUrl })} styles={styles} wide />
+      </View>
       <Text style={styles.fieldLabel}>Banner audience</Text><View style={styles.choiceRow}>{(['B2C', 'B2B', 'BOTH'] as BannerAudience[]).map((audience) => <Choice key={audience} label={audience} selected={form.audience === audience} onPress={() => setForm({ ...form, audience })} styles={styles} />)}</View>
       <Text style={styles.fieldLabel}>Linked product</Text><View style={styles.choiceRow}>{products.filter((product) => product.active).map((product) => <Choice key={product.id} label={product.name} selected={form.productId === product.id} onPress={() => setForm({ ...form, productId: product.id })} styles={styles} />)}</View>
       <View style={styles.choiceRow}><Choice label="Upload image" selected={false} onPress={() => void uploadImage()} styles={styles} /><Choice label="Visible on home" selected={form.active} onPress={() => setForm({ ...form, active: !form.active })} styles={styles} /></View>
@@ -390,20 +440,118 @@ async function chooseAndUpload(token: string, onUploaded: (url: string) => void,
 
 function Editor({ title, children, styles }: { title: string; children: React.ReactNode; styles: Styles }) { return <View style={styles.card}><Text style={styles.cardTitle}>{title}</Text>{children}</View>; }
 function Loading({ styles }: { styles: Styles }) { return <View style={styles.inlineLoading}><ActivityIndicator color={styles.spinner.color} /><Text style={styles.muted}>Loading…</Text></View>; }
-function Field({ label, styles, ...props }: { label: string; styles: Styles } & ComponentProps<typeof TextInput>) { return <View style={styles.field}><Text style={styles.fieldLabel}>{label}</Text><TextInput {...props} placeholderTextColor={styles.placeholder.color} style={[styles.input, props.multiline && styles.inputMultiline]} /></View>; }
+function Field({ label, styles, wide, ...props }: { label: string; styles: Styles; wide?: boolean } & ComponentProps<typeof TextInput>) { return <View style={[styles.field, wide && styles.fieldWide]}><Text style={styles.fieldLabel}>{label}</Text><TextInput {...props} placeholderTextColor={styles.placeholder.color} style={[styles.input, props.multiline && styles.inputMultiline]} /></View>; }
 function Choice({ label, selected, onPress, styles }: { label: string; selected: boolean; onPress(): void; styles: Styles }) { return <Pressable onPress={onPress} style={[styles.choice, selected && styles.choiceActive]}><Text numberOfLines={1} style={[styles.choiceText, selected && styles.choiceTextActive]}>{selected ? '✓ ' : ''}{label}</Text></Pressable>; }
 function Action({ label, onPress, styles, secondary = false, danger = false, small = false, busy = false, disabled = false }: { label: string; onPress(): void; styles: Styles; secondary?: boolean; danger?: boolean; small?: boolean; busy?: boolean; disabled?: boolean }) { return <Pressable accessibilityRole="button" disabled={disabled || busy} onPress={onPress} style={[styles.action, secondary && styles.actionSecondary, danger && styles.actionDanger, small && styles.actionSmall, (disabled || busy) && styles.disabled]}>{busy ? <ActivityIndicator size="small" color={danger ? styles.dangerText.color : '#FFFFFF'} /> : <Text style={[styles.actionText, secondary && styles.actionTextSecondary, danger && styles.actionTextDanger]}>{label}</Text>}</Pressable>; }
 
 type Styles = ReturnType<typeof createStyles>;
-const createStyles = (colors: ThemeColors) => StyleSheet.create({
-  page: { flex: 1, backgroundColor: colors.ink }, loading: { flex: 1, minHeight: 500, alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.ink }, spinner: { color: colors.teal }, muted: { color: colors.muted, fontSize: 12 },
-  topbar: { minHeight: 68, paddingHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.line }, brand: { color: colors.cream, fontSize: 17, fontWeight: '900', letterSpacing: .4 }, brandAccent: { color: colors.teal }, topActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm }, adminName: { color: colors.muted, fontSize: 12, fontWeight: '700' },
-  workspace: { flex: 1 }, workspaceDesktop: { flexDirection: 'row' }, sidebar: { flexGrow: 0, width: 224, backgroundColor: colors.primary, padding: spacing.md }, sidebarMobile: { width: '100%', maxHeight: 64 }, sidebarRow: { flexDirection: 'row', gap: spacing.sm, paddingRight: spacing.md }, navButton: { minHeight: 44, paddingHorizontal: spacing.md, borderRadius: radius.sm, justifyContent: 'center', marginBottom: spacing.xs }, navActive: { backgroundColor: colors.teal }, navText: { color: '#CBD5E1', fontSize: 13, fontWeight: '800' }, navTextActive: { color: '#FFFFFF' }, storeLink: { minHeight: 44, paddingHorizontal: spacing.md, justifyContent: 'center' }, storeLinkText: { color: '#FFFFFF', fontSize: 12, fontWeight: '800' },
-  main: { flex: 1, backgroundColor: colors.surfaceSunken }, mainContent: { padding: spacing.xl, gap: spacing.lg, width: '100%', maxWidth: 1280, alignSelf: 'center' }, titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, eyebrow: { color: colors.teal, fontSize: 10, fontWeight: '900', letterSpacing: 1 }, title: { color: colors.cream, fontSize: 28, fontWeight: '900', marginTop: 3 }, message: { color: colors.cream, backgroundColor: colors.tealTint, borderWidth: 1, borderColor: colors.teal, borderRadius: radius.sm, padding: spacing.md, fontSize: 12 },
-  metricGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }, metric: { flexGrow: 1, flexBasis: 200, padding: spacing.xl, borderRadius: radius.md, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface }, metricValue: { color: colors.cream, fontSize: 34, fontWeight: '900' }, metricLabel: { color: colors.muted, fontSize: 12, fontWeight: '800', marginTop: 4 }, errorText: { color: colors.danger, fontSize: 12, fontWeight: '800' },
-  stack: { gap: spacing.lg }, card: { padding: spacing.lg, borderRadius: radius.md, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface, gap: spacing.md }, cardTitle: { color: colors.cream, fontSize: 18, fontWeight: '900' }, formGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }, field: { flexGrow: 1, flexBasis: 220, gap: 6 }, fieldLabel: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: .5 }, input: { minHeight: 46, paddingHorizontal: spacing.md, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, backgroundColor: colors.surfaceSunken, color: colors.cream, fontSize: 13 }, inputMultiline: { minHeight: 86, paddingVertical: spacing.md, textAlignVertical: 'top' }, placeholder: { color: colors.muted },
-  choiceRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }, choice: { minHeight: 36, maxWidth: 260, paddingHorizontal: spacing.md, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface }, choiceActive: { borderColor: colors.teal, backgroundColor: colors.tealTint }, choiceText: { color: colors.muted, fontSize: 11, fontWeight: '800' }, choiceTextActive: { color: colors.teal },
-  actionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }, action: { minHeight: 44, paddingHorizontal: spacing.lg, borderRadius: radius.sm, backgroundColor: colors.cta, alignItems: 'center', justifyContent: 'center' }, actionSecondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line }, actionDanger: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.danger }, actionSmall: { minHeight: 36, paddingHorizontal: spacing.md }, actionText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' }, actionTextSecondary: { color: colors.cream }, actionTextDanger: { color: colors.danger }, outlineButton: { minHeight: 38, paddingHorizontal: spacing.md, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' }, outlineText: { color: colors.cream, fontSize: 11, fontWeight: '800' }, disabled: { opacity: .45 },
-  dataRow: { minHeight: 82, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md, borderTopWidth: 1, borderTopColor: colors.line }, rowBody: { flex: 1, minWidth: 180 }, rowTitle: { color: colors.cream, fontSize: 14, fontWeight: '900' }, rowMeta: { color: colors.muted, fontSize: 11, marginTop: 4 }, stateText: { color: colors.success, fontSize: 9, fontWeight: '900', marginTop: 5 }, dangerText: { color: colors.danger }, rowActions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }, statusPicker: { flex: 1, minWidth: 260, gap: spacing.xs }, bannerSwatch: { width: 64, height: 48, borderRadius: radius.sm }, avatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.tealTint }, avatarText: { color: colors.teal, fontSize: 15, fontWeight: '900' }, inlineLoading: { minHeight: 120, alignItems: 'center', justifyContent: 'center', gap: spacing.sm },
-  previewBanner: { padding: spacing.md, borderRadius: radius.sm, backgroundColor: colors.tealTint, borderWidth: 1, borderColor: colors.teal, gap: spacing.xs }, previewTitle: { color: colors.teal, fontSize: 12, fontWeight: '900' }, previewCopy: { color: colors.cream, fontSize: 12, lineHeight: 18 }, segmentPill: { minWidth: 48, minHeight: 30, paddingHorizontal: spacing.sm, borderRadius: radius.pill, backgroundColor: colors.tealTint, alignItems: 'center', justifyContent: 'center' }, segmentText: { color: colors.teal, fontSize: 10, fontWeight: '900' }, serviceIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.copperTint }, serviceIconText: { color: colors.copper, fontSize: 17 },
+const createStyles = ({ colors, desktop, tablet, compact }: { colors: ThemeColors; desktop: boolean; tablet: boolean; compact: boolean }) => StyleSheet.create({
+  page: { flex: 1, backgroundColor: colors.ink },
+  loading: { flex: 1, minHeight: 500, alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.ink },
+  spinner: { color: colors.teal },
+  muted: { color: colors.muted, fontSize: 12 },
+
+  topbar: { minHeight: desktop ? 68 : 56, paddingHorizontal: desktop ? spacing.lg : spacing.sm, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.xs, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.line },
+  brandWrap: { flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  brandLogo: { width: desktop ? 36 : 28, height: desktop ? 36 : 28, borderRadius: radius.sm },
+  brandTextWrap: { flexShrink: 1 },
+  brand: { color: colors.cream, fontSize: desktop ? 18 : compact ? 13 : 15, fontWeight: '900', letterSpacing: .4 },
+  brandDot: { color: colors.teal },
+  brandTagline: { color: colors.teal, fontSize: desktop ? 10 : 8, fontWeight: '800', letterSpacing: 1.4, marginTop: 2 },
+  topActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, flexShrink: 0 },
+  adminName: { color: colors.muted, fontSize: 11, fontWeight: '700' },
+
+  workspace: { flex: 1 },
+  workspaceDesktop: { flexDirection: 'row' },
+  sidebar: { flexGrow: 0, width: 224, backgroundColor: colors.primary, padding: spacing.md },
+  sidebarMobile: { width: '100%', maxHeight: 56 },
+  sidebarRow: { flexDirection: 'row', gap: spacing.xs, paddingRight: spacing.sm, alignItems: 'center' },
+  navButton: { minHeight: desktop ? 44 : 38, paddingHorizontal: desktop ? spacing.md : spacing.sm, borderRadius: desktop ? radius.sm : radius.pill, justifyContent: 'center', marginBottom: desktop ? spacing.xs : 0 },
+  navActive: { backgroundColor: colors.teal },
+  navText: { color: '#CBD5E1', fontSize: desktop ? 13 : 11, fontWeight: '800' },
+  navTextActive: { color: '#FFFFFF' },
+  storeLink: { minHeight: desktop ? 44 : 38, paddingHorizontal: spacing.sm, justifyContent: 'center' },
+  storeLinkText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800' },
+
+  main: { flex: 1, backgroundColor: colors.surfaceSunken },
+  mainContent: { padding: desktop ? spacing.xl : spacing.md, gap: desktop ? spacing.lg : spacing.md, width: '100%', maxWidth: 1280, alignSelf: 'center' },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  eyebrow: { color: colors.teal, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
+  title: { color: colors.cream, fontSize: desktop ? 28 : 20, fontWeight: '900', marginTop: 2 },
+  message: { color: colors.cream, backgroundColor: colors.tealTint, borderWidth: 1, borderColor: colors.teal, borderRadius: radius.sm, padding: spacing.sm, fontSize: 11 },
+
+  metricGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  metric: { flexGrow: 1, flexBasis: desktop ? 200 : tablet ? '31%' : '45%', padding: desktop ? spacing.xl : spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface },
+  metricValue: { color: colors.cream, fontSize: desktop ? 34 : 24, fontWeight: '900' },
+  metricLabel: { color: colors.muted, fontSize: 11, fontWeight: '800', marginTop: 4 },
+  errorText: { color: colors.danger, fontSize: 12, fontWeight: '800' },
+
+  stack: { gap: desktop ? spacing.lg : spacing.md },
+  card: {
+    padding: desktop ? spacing.lg : spacing.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    gap: spacing.sm,
+    maxWidth: '100%',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: desktop ? 8 : 4 },
+    shadowOpacity: 0.14,
+    shadowRadius: desktop ? 16 : 8,
+    elevation: 3,
+  },
+  cardTitle: { color: colors.cream, fontSize: desktop ? 18 : 15, fontWeight: '900' },
+  formGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: desktop ? spacing.md : spacing.sm },
+  field: { flexGrow: 1, flexBasis: desktop ? 220 : tablet ? '47%' : '100%', gap: 4 },
+  fieldWide: { flexBasis: desktop ? '48%' : '100%' },
+  fieldLabel: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: .5 },
+  input: { minHeight: desktop ? 46 : 42, paddingHorizontal: spacing.sm, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, backgroundColor: colors.surfaceSunken, color: colors.cream, fontSize: 13 },
+  inputMultiline: { minHeight: desktop ? 90 : 72, paddingVertical: spacing.xs, textAlignVertical: 'top' },
+  placeholder: { color: colors.muted },
+
+  choiceRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
+  choice: { minHeight: desktop ? 36 : 34, maxWidth: 260, paddingHorizontal: spacing.sm, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface },
+  choiceActive: { borderColor: colors.teal, backgroundColor: colors.tealTint },
+  choiceText: { color: colors.muted, fontSize: 11, fontWeight: '800' },
+  choiceTextActive: { color: colors.teal },
+
+  actionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
+  action: { minHeight: desktop ? 44 : 40, paddingHorizontal: desktop ? spacing.lg : spacing.md, borderRadius: radius.sm, backgroundColor: colors.cta, alignItems: 'center', justifyContent: 'center' },
+  actionSecondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line },
+  actionDanger: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.danger },
+  actionSmall: { minHeight: desktop ? 36 : 34, paddingHorizontal: spacing.sm },
+  actionText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
+  actionTextSecondary: { color: colors.cream },
+  actionTextDanger: { color: colors.danger },
+  outlineButton: { minHeight: 36, paddingHorizontal: spacing.sm, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
+  outlineText: { color: colors.cream, fontSize: 11, fontWeight: '800' },
+  disabled: { opacity: .45 },
+
+  dataRow: { minHeight: desktop ? 82 : 64, flexDirection: desktop ? 'row' : 'column', flexWrap: 'wrap', alignItems: desktop ? 'center' : 'flex-start', gap: spacing.sm, paddingVertical: spacing.sm, borderTopWidth: 1, borderTopColor: colors.line, overflow: 'hidden' },
+  rowBody: { flex: 1, minWidth: 0, width: '100%' },
+  productRow: { flexDirection: desktop ? 'row' : 'column', alignItems: desktop ? 'flex-start' : 'stretch', gap: spacing.sm, paddingVertical: spacing.md, borderTopWidth: 1, borderTopColor: colors.line },
+  productThumbWrap: { flexShrink: 0, alignItems: desktop ? 'flex-start' : 'center' },
+  productThumb: { width: desktop ? 76 : 84, height: desktop ? 76 : 84, borderRadius: radius.sm, backgroundColor: colors.surfaceSunken },
+  productThumbEmpty: { alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.line },
+  productThumbEmptyText: { color: colors.muted, fontSize: 9, fontWeight: '700', textAlign: 'center' },
+  productDetails: { flex: 1, minWidth: 0, width: '100%', gap: 3 },
+  rowTitle: { color: colors.cream, fontSize: 13, fontWeight: '900' },
+  rowMeta: { color: colors.muted, fontSize: 11, marginTop: 2 },
+  stateText: { color: colors.success, fontSize: 9, fontWeight: '900', marginTop: 3 },
+  dangerText: { color: colors.danger },
+  rowActions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs, marginTop: desktop ? 0 : spacing.xs },
+  statusPicker: { flex: 1, minWidth: desktop ? 260 : 0, gap: spacing.xs },
+  bannerSwatch: { width: desktop ? 64 : 48, height: desktop ? 48 : 36, borderRadius: radius.sm },
+  avatar: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.tealTint },
+  avatarText: { color: colors.teal, fontSize: 14, fontWeight: '900' },
+  inlineLoading: { minHeight: 80, alignItems: 'center', justifyContent: 'center', gap: spacing.sm },
+
+  previewBanner: { padding: spacing.sm, borderRadius: radius.sm, backgroundColor: colors.tealTint, borderWidth: 1, borderColor: colors.teal, gap: spacing.xs },
+  previewTitle: { color: colors.teal, fontSize: 11, fontWeight: '900' },
+  previewCopy: { color: colors.cream, fontSize: 11, lineHeight: 16 },
+  segmentPill: { minWidth: 42, minHeight: 26, paddingHorizontal: spacing.xs, borderRadius: radius.pill, backgroundColor: colors.tealTint, alignItems: 'center', justifyContent: 'center' },
+  segmentText: { color: colors.teal, fontSize: 9, fontWeight: '900' },
+  serviceIcon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.copperTint },
+  serviceIconText: { color: colors.copper, fontSize: 15 },
 });

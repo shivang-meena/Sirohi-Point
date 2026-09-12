@@ -54,7 +54,7 @@ const categoryLinks = [
   { label: 'Electrical', href: '/catalog', params: { category: 'Electrical' } },
   { label: 'Electronics', href: '/catalog', params: { category: 'Electronics' } },
   { label: 'Paint', href: '/catalog', params: { category: 'Paint' } },
-  { label: 'Plumbing', href: '/catalog', params: { category: 'PVC & Plumbing' } },
+  { label: 'PVC PIPE', href: '/catalog', params: { category: 'PVC & Plumbing' } },
   { label: 'Sanitary', href: '/catalog', params: { category: 'Sanitary' } },
   { label: 'Explore technicians', href: '/services/nearby' },
 ] as const;

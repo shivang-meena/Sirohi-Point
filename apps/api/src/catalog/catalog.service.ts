@@ -81,7 +81,7 @@ const fallbackCategories = [
   },
   {
     id: categoryIdsByLegacyName.Plumbing,
-    name: 'Plumbing',
+    name: 'PVC PIPE',
     slug: 'plumbing',
     subcategories: [
       { id: '00000000-0000-4000-8000-000000002016', name: 'Pvc Fitting', slug: 'pvc-fitting' },

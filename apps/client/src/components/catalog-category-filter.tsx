@@ -40,7 +40,7 @@ export function CatalogCategoryFilter({
 
   useEffect(() => {
     if (initialised.current || !initialCategory || !categoryData.length) return;
-    const normalizedInitialCategory = initialCategory === 'PVC & Plumbing' ? 'plumbing' : initialCategory;
+    const normalizedInitialCategory = initialCategory === 'PVC & Plumbing' || initialCategory === 'PVC PIPE' ? 'plumbing' : initialCategory;
     const match = categoryData.find((category) => category.name === initialCategory || category.slug === normalizedInitialCategory);
     if (match) onCategoryIdsChange([match.id]);
     initialised.current = true;
