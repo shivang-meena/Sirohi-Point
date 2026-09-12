@@ -25,6 +25,7 @@ import {
   getAdminServiceBookings,
   getAdminUsers,
   getAdminUserProfile,
+  getCatalogCategories,
   rejectAdminOrder,
   rejectAdminContractor,
   rejectAdminBusiness,
@@ -39,6 +40,7 @@ import {
   updateAdminBanner,
   updateAdminProduct,
   uploadAdminImage,
+  type CatalogCategory,
   type ServiceBookingRecord,
 } from '@/lib/api';
 import { useAuth } from '@/state/auth-context';
@@ -64,7 +66,7 @@ const tabs: { key: AdminTab; label: string }[] = [
 ];
 
 const emptyProduct = {
-  name: '', category: 'Hardware' as ProductCategory, brand: '', description: '', price: '', b2bPrice: '', minimumB2BQuantity: '', compareAtPrice: '', stock: '', badge: '', tone: '#1769FF', serviceAvailable: false, allowB2BBackorder: false, active: true, imageUrl: '',
+  name: '', category: 'Hardware' as ProductCategory, subcategoryId: '', brand: '', description: '', price: '', b2bPrice: '', minimumB2BQuantity: '', compareAtPrice: '', stock: '', badge: '', tone: '#1769FF', serviceAvailable: false, allowB2BBackorder: false, active: true, imageUrl: '',
 };
 const emptyBanner = {
   title: '', subtitle: '', badge: '', imageUrl: '', productId: '', ctaLabel: 'Shop now', audience: 'B2C' as BannerAudience, backgroundColor: '#0B1F33', sortOrder: '0', active: true,
@@ -302,7 +304,7 @@ function Metric({ value, label, styles }: { value: number; label: string; styles
   return <View style={styles.metric}><Text style={styles.metricValue}>{value}</Text><Text style={styles.metricLabel}>{label}</Text></View>;
 }
 
-function ProductRow({ product, onEdit, onRemove, busy, styles }: { product: AdminProduct; onEdit(): void; onRemove(): void; busy: boolean; styles: Styles }) {
+function ProductRow({ product, subcategoryName, onEdit, onRemove, busy, styles }: { product: AdminProduct; subcategoryName?: string; onEdit(): void; onRemove(): void; busy: boolean; styles: Styles }) {
   const b2cPriceInPaise = product.b2cPriceInPaise ?? product.priceInPaise;
   return (
     <View style={styles.productRow}>
@@ -315,7 +317,7 @@ function ProductRow({ product, onEdit, onRemove, busy, styles }: { product: Admi
       </View>
       <View style={styles.productDetails}>
         <Text numberOfLines={1} style={styles.rowTitle}>{product.name}</Text>
-        <Text style={styles.rowMeta}>{product.category} · {product.brand}</Text>
+        <Text style={styles.rowMeta}>{product.category}{subcategoryName ? ` › ${subcategoryName}` : ''} · {product.brand}</Text>
         <Text style={styles.rowMeta}>
           B2C {formatMoney(b2cPriceInPaise)}
           {product.b2bPriceInPaise ? ` · B2B ${formatMoney(product.b2bPriceInPaise)}${product.minimumB2BQuantity ? ` (min ${product.minimumB2BQuantity})` : ''}` : ''}
@@ -338,10 +340,16 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
   const [form, setForm] = useState(emptyProduct);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const categoriesQuery = useQuery({ queryKey: ['catalog', 'categories'], queryFn: () => getCatalogCategories() });
+  const categories: CatalogCategory[] = categoriesQuery.data ?? [];
+  const categoryToSlugMap: Record<ProductCategory, string> = { 'Hardware': 'hardware', 'Electrical': 'electrical', 'Electronics': 'electronics', 'Paint': 'paint', 'PVC PIPE': 'plumbing', 'PVC & Plumbing': 'plumbing', 'Sanitary': 'sanitary', 'Others': 'others' };
+  const selectedCategorySlug = categoryToSlugMap[form.category];
+  const matchedCategory = categories.find((c) => c.slug === selectedCategorySlug);
+  const subcategories = matchedCategory?.subcategories ?? [];
 
   function edit(product: AdminProduct) {
     setEditingId(product.id);
-    setForm({ name: product.name, category: product.category, brand: product.brand, description: product.description, price: String((product.b2cPriceInPaise ?? product.priceInPaise) / 100), b2bPrice: product.b2bPriceInPaise ? String(product.b2bPriceInPaise / 100) : '', minimumB2BQuantity: product.minimumB2BQuantity ? String(product.minimumB2BQuantity) : '', compareAtPrice: product.compareAtPriceInPaise ? String(product.compareAtPriceInPaise / 100) : '', stock: String(product.stock), badge: product.badge ?? '', tone: product.tone, serviceAvailable: product.serviceAvailable, allowB2BBackorder: product.allowB2BBackorder ?? false, active: product.active, imageUrl: product.imageUrl ?? '' });
+    setForm({ name: product.name, category: product.category, subcategoryId: product.subcategoryId ?? '', brand: product.brand, description: product.description, price: String((product.b2cPriceInPaise ?? product.priceInPaise) / 100), b2bPrice: product.b2bPriceInPaise ? String(product.b2bPriceInPaise / 100) : '', minimumB2BQuantity: product.minimumB2BQuantity ? String(product.minimumB2BQuantity) : '', compareAtPrice: product.compareAtPriceInPaise ? String(product.compareAtPriceInPaise / 100) : '', stock: String(product.stock), badge: product.badge ?? '', tone: product.tone, serviceAvailable: product.serviceAvailable, allowB2BBackorder: product.allowB2BBackorder ?? false, active: product.active, imageUrl: product.imageUrl ?? '' });
   }
 
   async function save() {
@@ -353,6 +361,7 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
       ...(form.compareAtPrice ? { compareAtPriceInPaise: Math.round(Number(form.compareAtPrice) * 100) } : {}),
       ...(form.badge.trim() ? { badge: form.badge.trim() } : {}),
       ...(form.imageUrl.trim() ? { imageUrl: form.imageUrl.trim() } : {}),
+      ...(form.subcategoryId ? { subcategoryId: form.subcategoryId } : {}),
     };
     if (!input.name || !input.brand || !input.description || !Number.isFinite(input.priceInPaise) || !Number.isInteger(input.stock)) { setMessage('Complete the required product fields with valid numbers.'); return; }
     setBusy(true);
@@ -382,7 +391,8 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
         <Field label="Stock" value={form.stock} keyboardType="number-pad" onChangeText={(stock) => setForm({ ...form, stock })} styles={styles} />
         <Field label="Badge" value={form.badge} onChangeText={(badge) => setForm({ ...form, badge })} styles={styles} />
       </View>
-      <Text style={styles.fieldLabel}>Category</Text><View style={styles.choiceRow}>{productCategories.map((category) => <Choice key={category} label={category} selected={form.category === category} onPress={() => setForm({ ...form, category })} styles={styles} />)}</View>
+      <Text style={styles.fieldLabel}>Category</Text><View style={styles.choiceRow}>{productCategories.map((category) => <Choice key={category} label={category} selected={form.category === category} onPress={() => setForm({ ...form, category, subcategoryId: '' })} styles={styles} />)}</View>
+      {subcategories.length > 0 ? <><Text style={styles.fieldLabel}>Subcategory</Text><View style={styles.choiceRow}>{subcategories.map((sub) => <Choice key={sub.id} label={sub.name} selected={form.subcategoryId === sub.id} onPress={() => setForm({ ...form, subcategoryId: sub.id })} styles={styles} />)}</View></> : null}
       <View style={styles.formGrid}>
         <Field label="Description" value={form.description} multiline onChangeText={(description) => setForm({ ...form, description })} styles={styles} wide />
         <Field label="Product image URL" value={form.imageUrl} onChangeText={(imageUrl) => setForm({ ...form, imageUrl })} styles={styles} wide />
@@ -390,7 +400,7 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
       <View style={styles.choiceRow}><Choice label="Upload image" selected={false} onPress={() => void uploadImage()} styles={styles} /><Choice label="Installation available" selected={form.serviceAvailable} onPress={() => setForm({ ...form, serviceAvailable: !form.serviceAvailable })} styles={styles} /><Choice label="B2B backorder allowed" selected={form.allowB2BBackorder} onPress={() => setForm({ ...form, allowB2BBackorder: !form.allowB2BBackorder })} styles={styles} /><Choice label="Visible in store" selected={form.active} onPress={() => setForm({ ...form, active: !form.active })} styles={styles} /></View>
       <View style={styles.actionRow}><Action label={editingId ? 'Save changes' : 'Add product'} onPress={() => void save()} busy={busy} styles={styles} />{editingId ? <Action label="Cancel" secondary onPress={() => { setEditingId(null); setForm(emptyProduct); }} styles={styles} /> : null}</View>
     </Editor>
-    <Editor title={`Products (${products.length})`} styles={styles}>{loading ? <Loading styles={styles} /> : products.map((product) => <ProductRow key={product.id} product={product} onEdit={() => edit(product)} onRemove={() => void remove(product.id)} busy={busy} styles={styles} />)}</Editor>
+    <Editor title={`Products (${products.length})`} styles={styles}>{loading ? <Loading styles={styles} /> : products.map((product) => { const subName = product.subcategoryId ? categories.flatMap((c) => c.subcategories).find((s) => s.id === product.subcategoryId)?.name : undefined; return <ProductRow key={product.id} product={product} subcategoryName={subName} onEdit={() => edit(product)} onRemove={() => void remove(product.id)} busy={busy} styles={styles} />; })}</Editor>
   </View>;
 }
 
