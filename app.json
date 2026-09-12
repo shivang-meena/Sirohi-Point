@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "219b83c5-eba4-4858-89aa-49504027b35f"
+      }
+    },
+    "android": {
+      "package": "com.shivangm33na.sirohipointplatform"
+    }
+  }
+}
