@@ -21,6 +21,7 @@ import type {
   NearbyContractorQuery,
   OrderDetails,
   OrderSummary,
+  PaymentChannel,
   Product,
   PublicUser,
   CustomerRegisterInput,
@@ -30,6 +31,8 @@ import type {
   CreateProductReviewInput,
   ProductReview,
   ServiceBookingInput,
+  HsnMaster,
+  AdminHsnInput,
 } from '@sirohi/contracts';
 
 export type CatalogCategory = {
@@ -223,6 +226,7 @@ export interface RazorpayPaymentVerification {
   razorpayOrderId: string;
   state: 'COMPLETED' | 'FAILED' | string;
   amount: number;
+  paymentChannel?: PaymentChannel;
 }
 
 export function initiateRazorpayPayment(token: string, input: CreateOrderInput) {
@@ -247,6 +251,23 @@ export function getOrders(token: string) {
 
 export function getOrder(token: string, id: string) {
   return request<OrderDetails>(`/orders/${encodeURIComponent(id)}`, { token });
+}
+
+export async function downloadOrderBill(token: string, id: string) {
+  if (typeof document === 'undefined') throw new Error('Bill download is currently available in the web app.');
+  const response = await fetch(`${requireApiBaseUrl()}/api/v1/orders/${encodeURIComponent(id)}/bill`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new ApiError('Unable to download this bill.', response.status);
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `sirohi-point-bill-${id}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 function queryString(values: Record<string, string | number | boolean | string[] | undefined>) {
@@ -359,6 +380,8 @@ export function getAdminOverview(token: string) {
 export function getAdminProducts(token: string) {
   return request<AdminProduct[]>('/admin/products', { token });
 }
+export function getAdminHsnMaster(token: string) { return request<HsnMaster[]>('/admin/hsn-master', { token }); }
+export function createAdminHsnMaster(token: string, input: AdminHsnInput) { return request<HsnMaster>('/admin/hsn-master', { token, method: 'POST', body: JSON.stringify(input) }); }
 
 export function createAdminProduct(token: string, input: AdminProductInput) {
   return request<AdminProduct>('/admin/products', {
@@ -504,9 +527,12 @@ export function removeAdminBanner(token: string, id: string) {
   });
 }
 
-export async function uploadAdminImage(token: string, file: Blob, name: string) {
+export type NativeUploadFile = { uri: string; type: string; name: string };
+
+export async function uploadAdminImage(token: string, file: Blob | NativeUploadFile, name: string) {
   const body = new FormData();
-  body.append('file', file, name);
+  if ('uri' in file) body.append('file', file as unknown as Blob);
+  else body.append('file', file, name);
   return request<{ url: string; size: number }>('/admin/uploads', {
     token,
     method: 'POST',

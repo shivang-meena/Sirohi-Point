@@ -2,6 +2,9 @@ import { VersioningType, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
+import express from 'express';
+import { mkdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 
@@ -17,6 +20,13 @@ async function bootstrap() {
   if (!allowedOrigins.includes(clientAppUrl)) allowedOrigins.push(clientAppUrl);
 
   app.use(helmet());
+  const uploadsDirectory = resolve(process.cwd(), 'uploads');
+  mkdirSync(uploadsDirectory, { recursive: true });
+  app.getHttpAdapter().getInstance().use('/uploads', express.static(uploadsDirectory, {
+    setHeaders: (response) => {
+      response.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
+  }));
   app.enableCors({ origin: allowedOrigins, credentials: true });
   app.getHttpAdapter().getInstance().get('/business/cart', (_request: Request, response: Response) => response.redirect(302, `${clientAppUrl}/business/login`));
   app.setGlobalPrefix('api');

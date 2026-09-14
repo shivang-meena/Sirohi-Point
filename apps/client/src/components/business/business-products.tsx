@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, Platform, Pressable, StyleSheet, Text, View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
 import { useAppState } from '@/state/app-context';
 import { useBusinessStyles } from '@/theme/business-theme';
+import { useAuth } from '@/state/auth-context';
 import { PortalButton, StatusBadge } from './business-ui';
 
 export const businessCollections = [
@@ -30,11 +31,13 @@ export function BusinessProductCard({ product, style }: { product: Product; styl
   const compact = width < 560;
   const router = useRouter();
   const { addToCart } = useAppState();
+  const { user, token } = useAuth();
+  const priceVisible = user?.role === 'BUSINESS' && Boolean(token) && product.priceVisible !== false;
   const price = product.b2bPriceInPaise ?? product.priceInPaise;
   const minimum = product.minimumB2BQuantity ?? 1;
   const unavailable = !product.allowB2BBackorder && product.stock < minimum;
   const compare = product.b2cPriceInPaise;
-  const saving = compare && compare > price ? Math.round((1 - price / compare) * 100) : 0;
+  const saving = priceVisible && compare && compare > price ? Math.round((1 - price / compare) * 100) : 0;
   const entrance = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(entrance, {
@@ -47,7 +50,7 @@ export function BusinessProductCard({ product, style }: { product: Product; styl
   return <Animated.View style={[styles.productCard, compact && styles.productCardCompact, style, { opacity: entrance, transform: [{ translateY: entrance.interpolate({ inputRange: [0, 1], outputRange: [14, 0] }) }] }]}>
     <Pressable accessibilityRole="link" accessibilityLabel={`View ${product.name}`} onPress={() => router.push(`/business/product/${product.id}` as never)} style={({ pressed }) => [styles.productLink, pressed && { opacity: 0.8 }]}>
       <View style={[styles.imageArea, compact && styles.imageAreaCompact]}><ProductVisual product={product} style={[styles.cardVisual, compact && styles.cardVisualCompact]} /><View style={styles.imageBadge}><StatusBadge label={saving ? `${saving}% below retail` : 'BUSINESS ESSENTIAL'} tone={saving ? 'warning' : 'neutral'} /></View></View>
-      <View style={[styles.productInfo, compact && styles.productInfoCompact]}><Text style={[styles.brand, compact && styles.brandCompact]}>{product.brand}</Text><Text numberOfLines={2} style={[styles.productName, compact && styles.productNameCompact]}>{product.name}</Text><Text style={[styles.category, compact && styles.categoryCompact]}>{product.category}</Text><View style={styles.priceRow}><Text style={[styles.price, compact && styles.priceCompact]}>{formatMoney(price)}</Text>{saving ? <Text style={styles.oldPrice}>{formatMoney(compare!)}</Text> : null}</View><Text numberOfLines={1} style={[styles.priceNote, compact && styles.priceNoteCompact]}>per unit · GST extra if applicable</Text></View>
+      <View style={[styles.productInfo, compact && styles.productInfoCompact]}><Text style={[styles.brand, compact && styles.brandCompact]}>{product.brand}</Text><Text numberOfLines={2} style={[styles.productName, compact && styles.productNameCompact]}>{product.name}</Text><Text style={[styles.category, compact && styles.categoryCompact]}>{product.category}</Text><View style={styles.priceRow}>{priceVisible ? <><Text style={[styles.price, compact && styles.priceCompact]}>{formatMoney(price)}</Text>{saving ? <Text style={styles.oldPrice}>{formatMoney(compare!)}</Text> : null}</> : <PortalButton label="Reveal Price" compact={compact} onPress={() => router.push('/business/login' as never)} />}</View>{priceVisible ? <Text numberOfLines={1} style={[styles.priceNote, compact && styles.priceNoteCompact]}>per unit · GST extra if applicable</Text> : <Text numberOfLines={1} style={[styles.priceNote, compact && styles.priceNoteCompact]}>Sign in to see business pricing</Text>}</View>
     </Pressable>
     <View style={[styles.buyArea, compact && styles.buyAreaCompact]}><View style={[styles.terms, compact && styles.termsCompact]}><Text style={[styles.minimum, compact && styles.minimumCompact]}>MOQ {minimum} units</Text><Text style={[styles.stock, compact && styles.stockCompact, unavailable && styles.unavailable]}>{unavailable ? 'Unavailable' : product.stock >= minimum ? '● In stock' : 'Backorder'}</Text></View><PortalButton label={unavailable ? 'Insufficient stock' : compact ? 'Add to cart +' : `Add ${minimum} to cart  +`} compact={compact} disabled={unavailable} onPress={() => addToCart(product, minimum)} /></View>
   </Animated.View>;

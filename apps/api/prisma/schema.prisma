@@ -42,6 +42,15 @@ enum PaymentMethod {
   ONLINE
 }
 
+enum PaymentChannel {
+  CARD
+  UPI
+  NETBANKING
+  WALLET
+  EMI
+  OTHER
+}
+
 enum BookingStatus {
   REQUESTED
   MATCHED
@@ -174,6 +183,7 @@ model Product {
   id                    String          @id
   vendorId              String?         @db.Uuid
   categoryId            String          @db.Uuid
+  hsnId                 String?         @db.Uuid
   subcategoryId         String?         @db.Uuid
   name                  String
   slug                  String          @unique
@@ -184,6 +194,7 @@ model Product {
   b2bPriceInPaise       Int?
   minimumB2BQuantity    Int             @default(1)
   allowB2BBackorder     Boolean         @default(false)
+  codAvailable          Boolean         @default(true)
   specifications        Json?
   compareAtPriceInPaise Int?
   rating                Float           @default(0)
@@ -195,6 +206,7 @@ model Product {
   active                Boolean         @default(true)
   vendor                Vendor?         @relation(fields: [vendorId], references: [id], onDelete: SetNull)
   category              Category        @relation(fields: [categoryId], references: [id])
+  hsn                   HsnMaster?      @relation(fields: [hsnId], references: [id], onDelete: SetNull)
   subcategory           Subcategory?    @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
   inventory             Inventory?
   orderItems            OrderItem[]
@@ -207,6 +219,20 @@ model Product {
   @@index([categoryId, active])
   @@index([subcategoryId, active])
   @@index([brand])
+  @@index([hsnId])
+}
+
+model HsnMaster {
+  id          String    @id @default(uuid()) @db.Uuid
+  code        String    @unique
+  description String
+  cgstRate    Float
+  sgstRate    Float
+  igstRate    Float
+  active      Boolean   @default(true)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model ProductReview {
@@ -277,7 +303,7 @@ model Inventory {
 }
 
 model Order {
-  id              String              @id @default(uuid()) @db.Uuid
+  id              String              @id
   customerId      String              @db.Uuid
   status          OrderStatus         @default(CONFIRMED)
   approvalStatus  OrderApprovalStatus @default(PENDING)
@@ -286,9 +312,24 @@ model Order {
   approvedAt      DateTime?
   rejectionReason String?
   paymentMethod   PaymentMethod
+  paymentChannel  PaymentChannel?
+  paymentProvider String?
+  razorpayPaymentId String? @unique
+  billingAddress  String
+  shippingAddress String
+  shippingSameAsBilling Boolean @default(true)
   deliveryAddress String
   totalInPaise    Int
   itemCount       Int
+  shopState       String?
+  customerState   String?
+  taxType         String?
+  subtotalInPaise Int             @default(0)
+  discountInPaise Int             @default(0)
+  cgstInPaise     Int             @default(0)
+  sgstInPaise     Int             @default(0)
+  igstInPaise     Int             @default(0)
+  taxInPaise      Int             @default(0)
   customer        User                @relation(fields: [customerId], references: [id])
   items           OrderItem[]
   booking         ServiceBooking?
@@ -301,12 +342,15 @@ model Order {
 
 model OrderItem {
   id                  String       @id @default(uuid()) @db.Uuid
-  orderId             String       @db.Uuid
+  orderId             String
   productId           String
   quantity            Int
   backorderedQuantity Int          @default(0)
   unitPriceInPaise    Int
   buyerSegment        BuyerSegment @default(B2C)
+  hsnCode             String?
+  taxRate             Float?
+  taxInPaise          Int          @default(0)
   order               Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product             Product      @relation(fields: [productId], references: [id])
 
@@ -317,7 +361,7 @@ model ServiceBooking {
   id                    String                @id @default(uuid()) @db.Uuid
   customerId            String                @db.Uuid
   contractorId          String?               @db.Uuid
-  orderId               String?               @unique @db.Uuid
+  orderId               String?               @unique
   serviceType           String
   address               String
   addressId             String?               @db.Uuid

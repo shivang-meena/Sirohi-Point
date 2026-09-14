@@ -37,15 +37,20 @@ export const productSchema = z.object({
   slug: z.string().min(2),
   category: z.enum(productCategories),
   categoryId: z.string().uuid().optional(),
+  hsnId: z.string().uuid().optional(),
+  hsnCode: z.string().trim().max(20).optional(),
+  gstRate: z.number().min(0).max(100).optional(),
   subcategoryId: z.string().uuid().optional(),
   brand: z.string().min(1),
   description: z.string().min(1),
   // `priceInPaise` remains the compatibility/display alias used by the current client.
   priceInPaise: z.number().int().nonnegative(),
+  priceVisible: z.boolean().optional(),
   b2cPriceInPaise: z.number().int().nonnegative().optional(),
   b2bPriceInPaise: z.number().int().nonnegative().optional(),
   minimumB2BQuantity: z.number().int().positive().optional(),
   allowB2BBackorder: z.boolean().optional(),
+  codAvailable: z.boolean().default(true),
   specifications: productSpecificationsSchema.optional(),
   compareAtPriceInPaise: z.number().int().positive().optional(),
   rating: z.number().min(0).max(5),
@@ -95,10 +100,28 @@ export const orderItemInputSchema = z.object({
 
 export const createOrderSchema = z.object({
   items: z.array(orderItemInputSchema).min(1).max(100).refine((items) => new Set(items.map((item) => item.productId)).size === items.length, 'Each product must appear only once'),
-  deliveryAddress: z.string().min(10).max(500),
+  billingAddress: z.string().trim().min(10).max(500),
+  shippingSameAsBilling: z.boolean().default(true),
+  shippingAddress: z.string().trim().min(10).max(500).optional(),
   paymentMethod: z.enum(['COD', 'ONLINE']),
+}).superRefine((input, context) => {
+  if (!input.shippingSameAsBilling && !input.shippingAddress) {
+    context.addIssue({ code: 'custom', path: ['shippingAddress'], message: 'Shipping address is required when it differs from billing address' });
+  }
 });
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
+
+export const paymentChannels = ['CARD', 'UPI', 'NETBANKING', 'WALLET', 'EMI', 'OTHER'] as const;
+export type PaymentChannel = typeof paymentChannels[number];
+
+export function paymentChannelLabel(channel?: PaymentChannel) {
+  if (channel === 'CARD') return 'Card';
+  if (channel === 'UPI') return 'UPI';
+  if (channel === 'NETBANKING') return 'Net Banking';
+  if (channel === 'WALLET') return 'Wallet';
+  if (channel === 'EMI') return 'EMI';
+  return channel ? 'Other online method' : 'Online';
+}
 
 export interface OrderSummary {
   id: string;
@@ -108,6 +131,7 @@ export interface OrderSummary {
   totalInPaise: number;
   itemCount: number;
   createdAt: string;
+  paymentChannel?: PaymentChannel;
 }
 
 export interface ApiEnvelope<T> {
@@ -178,6 +202,7 @@ export const adminProductInputSchema = z.object({
   name: z.string().trim().min(2).max(140),
   category: z.enum(productCategories),
   categoryId: z.string().uuid().optional(),
+  hsnId: z.string().uuid().optional(),
   subcategoryId: z.string().uuid().optional(),
   brand: z.string().trim().min(1).max(80),
   description: z.string().trim().min(2).max(1000),
@@ -187,6 +212,7 @@ export const adminProductInputSchema = z.object({
   b2bPriceInPaise: z.number().int().nonnegative().optional(),
   minimumB2BQuantity: z.number().int().positive().optional(),
   allowB2BBackorder: z.boolean().optional(),
+  codAvailable: z.boolean().optional(),
   specifications: productSpecificationsSchema.optional(),
   compareAtPriceInPaise: z.number().int().positive().optional(),
   stock: z.number().int().nonnegative(),
@@ -249,6 +275,9 @@ export interface OrderItemDetails {
   backorderedQuantity?: number;
   unitPriceInPaise: number;
   buyerSegment: PriceSegment;
+  hsnCode?: string;
+  taxRate?: number;
+  taxInPaise?: number;
 }
 
 export interface OrderDetails extends OrderSummary {
@@ -256,10 +285,43 @@ export interface OrderDetails extends OrderSummary {
   buyerName?: string;
   buyerEmail?: string;
   paymentMethod: 'COD' | 'ONLINE';
+  paymentProvider?: 'RAZORPAY';
+  razorpayPaymentId?: string;
+  billingAddress: string;
+  shippingAddress: string;
+  shippingSameAsBilling: boolean;
   deliveryAddress: string;
   cancellationReason?: string;
   items: OrderItemDetails[];
+  shopState?: string;
+  customerState?: string;
+  taxType?: 'CGST_SGST' | 'IGST' | 'NONE';
+  subtotalInPaise?: number;
+  discountInPaise?: number;
+  cgstInPaise?: number;
+  sgstInPaise?: number;
+  igstInPaise?: number;
+  taxInPaise?: number;
 }
+
+export interface HsnMaster {
+  id: string;
+  code: string;
+  description: string;
+  cgstRate: number;
+  sgstRate: number;
+  igstRate: number;
+  active: boolean;
+}
+
+export const adminHsnInputSchema = z.object({
+  code: z.string().trim().regex(/^\d{4,8}$/, 'HSN code must contain 4 to 8 digits'),
+  description: z.string().trim().min(3).max(240),
+  cgstRate: z.number().min(0).max(100),
+  sgstRate: z.number().min(0).max(100),
+  igstRate: z.number().min(0).max(100),
+});
+export type AdminHsnInput = z.infer<typeof adminHsnInputSchema>;
 
 export const orderRejectionSchema = z.object({
   reason: z.string().trim().min(2).max(500).optional(),
@@ -452,7 +514,7 @@ export const serviceBookingInputSchema = z.object({
   customerLongitude: z.number().min(-180).max(180).optional(),
   requestedPriceInPaise: z.number().int().nonnegative().optional(),
   offerId: z.string().uuid().optional(),
-  orderId: z.string().uuid().optional(),
+  orderId: z.string().trim().min(1).optional(),
   notes: z.string().trim().max(1000).optional(),
 });
 export type ServiceBookingInput = z.infer<typeof serviceBookingInputSchema>;

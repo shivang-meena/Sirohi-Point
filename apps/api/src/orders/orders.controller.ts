@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
+import type { Response } from 'express';
 import { createOrderSchema } from '@sirohi/contracts';
 
 import { AuthGuard } from '../auth/auth.guard';
@@ -8,6 +9,7 @@ import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { OrdersService } from './orders.service';
 import { RazorpayService } from './razorpay.service';
+import { createOrderBillPdf } from './invoice-pdf';
 
 @Controller({ path: 'orders', version: '1' })
 @UseGuards(AuthGuard, RolesGuard)
@@ -45,11 +47,11 @@ export class OrdersController {
     const payment = await this.razorpay.verifyPayment({ razorpayOrderId, razorpayPaymentId, razorpaySignature }, pending.amount);
     let orderId = pending.orderId;
     if (payment.state === 'COMPLETED' && !orderId) {
-      const order = await this.ordersService.create(pending.input, customer.id, customer.role === 'BUSINESS' ? 'B2B' : 'B2C');
+      const order = await this.ordersService.create(pending.input, customer.id, customer.role === 'BUSINESS' ? 'B2B' : 'B2C', { channel: payment.channel, provider: 'RAZORPAY', paymentId: razorpayPaymentId });
       orderId = order.id;
       this.razorpay.setCompletedOrder(razorpayOrderId, order.id);
     }
-    return { data: { orderId: orderId ?? '', razorpayOrderId, state: payment.state, amount: payment.amount } };
+    return { data: { orderId: orderId ?? '', razorpayOrderId, state: payment.state, amount: payment.amount, ...(payment.state === 'COMPLETED' ? { paymentChannel: payment.channel } : {}) } };
   }
 
   @Post()
@@ -66,6 +68,20 @@ export class OrdersController {
   @Get()
   async list(@CurrentUser() customer: AuthenticatedUser) {
     return { data: await this.ordersService.listForCustomer(customer.id) };
+  }
+
+  @Get(':id/bill')
+  async downloadBill(@Param('id') id: string, @CurrentUser() customer: AuthenticatedUser, @Res() response: Response) {
+    const bill = await this.ordersService.billForCustomer(customer, id);
+    const pdf = createOrderBillPdf(bill);
+    const filename = `sirohi-point-bill-${id}.pdf`;
+    response.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Length': String(pdf.length),
+      'Cache-Control': 'private, no-store',
+    });
+    response.send(pdf);
   }
 
   @Get(':id')

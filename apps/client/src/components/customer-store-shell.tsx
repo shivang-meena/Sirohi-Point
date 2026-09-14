@@ -14,6 +14,7 @@ import { FooterSocialLinks } from '@/components/footer-social-links';
 import { CustomerPaintCalculator } from '@/components/customer-paint-calculator';
 import { CustomerB2BOrdersSection } from '@/components/customer-b2b-orders-section';
 import { getSearchHistory, addSearchTerm, removeSearchTerm } from '@/lib/search-history';
+import { FloatingContactActions } from '@/components/floating-contact-actions';
 
 export const shopCategories = ['Hardware', 'Electrical', 'Electronics', 'Paint', 'PVC & Plumbing', 'Sanitary'];
 const bottomNavItems = [
@@ -69,7 +70,7 @@ export function CustomerStoreShell({ children, scroll = true }: PropsWithChildre
     <View style={styles.body}>{scroll ? <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">{body}</ScrollView> : body}</View>
     {!desktop ? <View style={styles.bottomNav}>{bottomNavItems.map(({ label, href, icon }) => { const active = pathname === href && (href !== '/dashboard' || (params.tab ?? 'orders') === (label === 'My orders' ? 'orders' : 'account')); return <Pressable accessibilityRole="link" accessibilityState={{ selected: active }} key={label} style={styles.bottomLink} onPress={() => go(href === '/dashboard' && !signedIn ? '/customer/login' : href, href === '/dashboard' && signedIn ? { tab: label === 'My orders' ? 'orders' : 'account' } : undefined)}><SymbolView name={icon} size={18} tintColor={active ? styles.activeText.color : styles.navText.color} /><Text style={[styles.navText, active && styles.activeText]}>{label}</Text></Pressable>; })}</View> : null}
     {notice ? <Pressable accessibilityRole="alert" onPress={dismissNotice} style={[styles.toast, !desktop && { bottom: 68 }]}><Text style={styles.cartText}>{notice}   ×</Text></Pressable> : null}
-  </SafeAreaView></>;
+  </SafeAreaView><FloatingContactActions /></>;
 }
 
 function SearchBarWithHistory({ go, styles }: { go(href: string, query?: Record<string, string>): void; styles: ReturnType<typeof createStyles> }) {

@@ -1,6 +1,6 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { BadGatewayException, BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import type { CreateOrderInput } from '@sirohi/contracts';
+import type { CreateOrderInput, PaymentChannel } from '@sirohi/contracts';
 
 interface PendingRazorpayPayment {
   customerId: string;
@@ -27,6 +27,16 @@ function getRazorpayErrorMessage(value: unknown, fallback: string) {
     : typeof error.message === 'string'
       ? error.message
       : fallback;
+}
+
+function normalizePaymentChannel(method: unknown): PaymentChannel {
+  const value = typeof method === 'string' ? method.toLowerCase() : '';
+  if (value === 'card') return 'CARD';
+  if (value === 'upi') return 'UPI';
+  if (value === 'netbanking') return 'NETBANKING';
+  if (value === 'wallet') return 'WALLET';
+  if (value === 'emi') return 'EMI';
+  return 'OTHER';
 }
 
 @Injectable()
@@ -123,6 +133,7 @@ export class RazorpayService {
     return {
       state: payload.status === 'captured' ? 'COMPLETED' as const : 'FAILED' as const,
       amount: typeof payload.amount === 'number' ? payload.amount : expectedAmount,
+      channel: normalizePaymentChannel(payload.method),
     };
   }
 

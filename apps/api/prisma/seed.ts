@@ -8,6 +8,9 @@ const customerId = '00000000-0000-4000-8000-000000000001';
 const vendorUserId = '00000000-0000-4000-8000-000000000002';
 const vendorId = '00000000-0000-4000-8000-000000000010';
 const adminId = '00000000-0000-4000-8000-000000000099';
+const defaultHsnIdByCategory: Record<string, string> = {
+  Hardware: '00000000-0000-4000-8000-000000002006', Electrical: '00000000-0000-4000-8000-000000002004', Electronics: '00000000-0000-4000-8000-000000002005', Paint: '00000000-0000-4000-8000-000000002003', 'PVC PIPE': '00000000-0000-4000-8000-000000002001', 'PVC & Plumbing': '00000000-0000-4000-8000-000000002001', Sanitary: '00000000-0000-4000-8000-000000002002', Others: '00000000-0000-4000-8000-000000002007',
+};
 
 const taxonomy = [
   { name: 'Hardware', slug: 'hardware', subcategories: ['Machines', 'Nut Bolts'] },
@@ -59,11 +62,52 @@ function slugify(name: string) {
 function inferSubcategorySlug(product: (typeof sourceProductSeed)[number]) {
   const explicit = subcategorySlugByProductId[product.id];
   if (explicit) return explicit;
-  const productSlug = product.slug.toLowerCase();
-  return taxonomy
-    .flatMap((category) => category.subcategories.map((name) => slugify(name)))
-    .sort((a, b) => b.length - a.length)
-    .find((slug) => productSlug.includes(slug));
+  const productText = `${product.name} ${product.slug}`.toLowerCase();
+  const rules: Record<string, Array<[string, RegExp]>> = {
+    Hardware: [
+      ['machines', /\b(machine|machines|chaff cutter|atta chakki)\b/],
+      ['nut-bolts', /\b(pata bolt|nut bolt|nut-bolt|bolt)\b/],
+    ],
+    Electrical: [
+      ['wire', /\b(wire|conduct pipe|conduit|copper)\b/],
+      ['bulb', /\b(bulb|led)\b/],
+      ['switch', /\b(switch|swich|rocker)\b/],
+      ['socket', /\b(socket|3 pin top|junction box|juction box)\b/],
+      ['regulator', /\b(regulator)\b/],
+    ],
+    Electronics: [
+      ['iron', /\b(iron|hair dryer|torch)\b/],
+      ['juicer', /\b(juicer|mixer|atta chaki|chakki)\b/],
+    ],
+    Paint: [
+      ['brush', /\b(brush)\b/],
+      ['mto', /\b(mto)\b/],
+      ['primer', /\b(primer)\b/],
+      ['wall-putty', /\b(putty)\b/],
+      ['wall-paint', /\b(wall paint)\b/],
+      ['paint', /\b(paint|nerolac|berger|indigo)\b/],
+    ],
+    'PVC PIPE': [
+      ['pvc-pipe', /\b(pipe|pipes|sch40|sch80|sdr)\b/],
+      ['valves-and-controls', /\b(ball valve|ballvale|valve)\b/],
+      ['fixtures-and-appliances', /\b(water tank|monoblock|water heater)\b/],
+      ['pvc-fitting', /\b(coupler|socket|elbow|tee|union|reducer|fta|mta|end cap|nipple|bend|fitting|solvent|plug|trap)\b/],
+    ],
+    Sanitary: [
+      ['english-toilet-seat', /\b(english|canva|backbone|nobel)\b.*\b(seat|toilet)\b/],
+      ['toilet-seat-hindi', /\b(hindi|tolit)\b.*\b(seat|toilet)\b/],
+      ['wash-basin', /\b(wash basin|sink)\b/],
+      ['shower', /\b(shower)\b/],
+      ['tap', /\b(tap|faucet|angle valve|angle vale|nipple)\b/],
+    ],
+  };
+  const categoryRules = rules[product.category] ?? [];
+  return categoryRules.find(([, pattern]) => pattern.test(productText))?.[0]
+    ?? taxonomy
+      .find((category) => category.name === product.category)
+      ?.subcategories.map((name) => slugify(name))
+      .sort((a, b) => b.length - a.length)
+      .find((slug) => product.slug.toLowerCase().includes(slug));
 }
 
 async function seed() {
@@ -173,6 +217,7 @@ async function seed() {
       update: {
         ...record,
         categoryId,
+        hsnId: defaultHsnIdByCategory[legacyCategory],
         ...(subcategory ? { subcategoryId: subcategory.id } : {}),
         imageUrl,
         vendorId,
@@ -181,10 +226,12 @@ async function seed() {
         b2bPriceInPaise: Math.round(product.priceInPaise * 0.9),
         minimumB2BQuantity: 10,
         allowB2BBackorder: false,
+        codAvailable: true,
       },
       create: {
         ...record,
         categoryId,
+        hsnId: defaultHsnIdByCategory[legacyCategory],
         ...(subcategory ? { subcategoryId: subcategory.id } : {}),
         imageUrl,
         vendorId,
@@ -193,6 +240,7 @@ async function seed() {
         b2bPriceInPaise: Math.round(product.priceInPaise * 0.9),
         minimumB2BQuantity: 10,
         allowB2BBackorder: false,
+        codAvailable: true,
       },
     });
     await prisma.inventory.upsert({

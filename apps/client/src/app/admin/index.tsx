@@ -1,8 +1,9 @@
-import type { AdminBannerInput, AdminBusinessDetails, AdminProduct, AdminProductInput, AdminUserProfile, Banner, BannerAudience, ContractorAdminDetails, ProductCategory, PublicUser, OrderDetails } from '@sirohi/contracts';
+import { paymentChannelLabel, type AdminBannerInput, type AdminBusinessDetails, type AdminProduct, type AdminProductInput, type AdminUserProfile, type Banner, type BannerAudience, type ContractorAdminDetails, type ProductCategory, type PublicUser, type OrderDetails, type HsnMaster } from '@sirohi/contracts';
 import { productCategories } from '@sirohi/contracts';
 import { radius, spacing, type ThemeColors } from '@sirohi/design-tokens';
 import { formatMoney } from '@sirohi/domain';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState, type ComponentProps } from 'react';
 import { ActivityIndicator, Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
@@ -22,6 +23,8 @@ import {
   getAdminOrders,
   getAdminOverview,
   getAdminProducts,
+  getAdminHsnMaster,
+  createAdminHsnMaster,
   getAdminServiceBookings,
   getAdminUsers,
   getAdminUserProfile,
@@ -41,6 +44,7 @@ import {
   updateAdminProduct,
   uploadAdminImage,
   type CatalogCategory,
+  type NativeUploadFile,
   type ServiceBookingRecord,
 } from '@/lib/api';
 import { useAuth } from '@/state/auth-context';
@@ -52,11 +56,12 @@ import { useAppTheme } from '@/theme/theme-context';
 // path below to match whatever filename you use).
 const sirohiLogo = require('./logo_sirohi.png');
 
-type AdminTab = 'overview' | 'products' | 'banners' | 'users' | 'orders' | 'services' | 'technicians' | 'businesses' | 'offers';
+type AdminTab = 'overview' | 'products' | 'hsn' | 'banners' | 'users' | 'orders' | 'services' | 'technicians' | 'businesses' | 'offers';
 const tabs: { key: AdminTab; label: string }[] = [
   { key: 'overview', label: 'Overview' },
   { key: 'offers', label: 'Service discounts' },
   { key: 'products', label: 'Products' },
+  { key: 'hsn', label: 'HSN Master' },
   { key: 'banners', label: 'Home banners' },
   { key: 'users', label: 'Users' },
   { key: 'orders', label: 'Order approvals' },
@@ -66,7 +71,7 @@ const tabs: { key: AdminTab; label: string }[] = [
 ];
 
 const emptyProduct = {
-  name: '', category: 'Hardware' as ProductCategory, subcategoryId: '', brand: '', description: '', price: '', b2bPrice: '', minimumB2BQuantity: '', compareAtPrice: '', stock: '', badge: '', tone: '#1769FF', serviceAvailable: false, allowB2BBackorder: false, active: true, imageUrl: '',
+  name: '', category: 'Hardware' as ProductCategory, subcategoryId: '', hsnId: '', brand: '', description: '', price: '', b2bPrice: '', minimumB2BQuantity: '', compareAtPrice: '', stock: '', badge: '', tone: '#1769FF', serviceAvailable: false, allowB2BBackorder: false, codAvailable: true, active: true, imageUrl: '',
 };
 const emptyBanner = {
   title: '', subtitle: '', badge: '', imageUrl: '', productId: '', ctaLabel: 'Shop now', audience: 'B2C' as BannerAudience, backgroundColor: '#0B1F33', sortOrder: '0', active: true,
@@ -135,6 +140,7 @@ export default function AdminScreen() {
           {tab === 'offers' ? <ServiceOffersEditor token={token!} /> : null}
           {tab === 'overview' ? <OverviewPanel data={overview.data} loading={overview.isLoading} styles={styles} /> : null}
           {tab === 'products' ? <ProductsPanel token={token!} products={products.data ?? []} loading={products.isLoading} onChanged={refresh} setMessage={setMessage} styles={styles} /> : null}
+          {tab === 'hsn' ? <HsnMasterPanel token={token!} onChanged={refresh} setMessage={setMessage} styles={styles} /> : null}
           {tab === 'banners' ? <BannersPanel token={token!} banners={banners.data ?? []} products={products.data ?? []} loading={banners.isLoading} onChanged={refresh} setMessage={setMessage} styles={styles} /> : null}
           {tab === 'users' ? <UsersPanel token={token!} users={users.data ?? []} currentUserId={user.id} loading={users.isLoading} onChanged={refresh} setMessage={setMessage} styles={styles} /> : null}
           {tab === 'orders' ? <OrdersPanel token={token!} orders={orders.data} loading={orders.isLoading} error={orders.isError} setMessage={setMessage} styles={styles} /> : null}
@@ -157,6 +163,8 @@ type AdminOrderPreview = {
   totalInPaise: number;
   approvalStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
   status: OrderDetails['status'];
+  paymentMethod: OrderDetails['paymentMethod'];
+  paymentChannel?: OrderDetails['paymentChannel'];
   summary: string;
 };
 
@@ -205,7 +213,7 @@ function OrdersPanel({ token, orders: liveOrders, loading, error, setMessage, st
   }
   return <View style={styles.stack}>
     <View style={styles.previewBanner}><Text style={styles.previewTitle}>Approval workflow</Text><Text style={styles.previewCopy}>Customer or business submits → admin reviews → admin approves or rejects → fulfilment status continues.</Text></View>
-    <Editor title="Product orders" styles={styles}>{loading ? <Loading styles={styles} /> : error ? <Text style={styles.errorText}>Unable to load orders from the backend.</Text> : orders.length ? orders.map((order) => <View key={order.id} style={styles.dataRow}><View style={styles.segmentPill}><Text style={styles.segmentText}>{order.segment}</Text></View><View style={styles.rowBody}><Text style={styles.rowTitle}>{order.id} · {order.buyer}</Text><Text style={styles.rowMeta}>{order.buyerEmail ?? 'Email not recorded'} · {order.summary}</Text><Text style={styles.rowMeta}>{order.itemCount} items · {formatMoney(order.totalInPaise)}</Text><Text style={[styles.stateText, (order.approvalStatus === 'REJECTED' || order.status === 'CANCELLED') && styles.dangerText]}>Approval: {order.approvalStatus} · {order.status}</Text>{order.cancellationReason ? <Text style={[styles.rowMeta, styles.dangerText]}>Reason: {order.cancellationReason}</Text> : null}</View><View style={styles.rowActions}>{order.approvalStatus === 'PENDING' ? <><Action label="Approve" small onPress={() => void updateApproval(order.id, 'APPROVED')} styles={styles} /><Action label="Reject" small danger onPress={() => void updateApproval(order.id, 'REJECTED')} styles={styles} /></> : order.approvalStatus === 'APPROVED' && order.status !== 'CANCELLED' ? <View style={styles.statusPicker}><Text style={styles.rowMeta}>Fulfilment status</Text><View style={styles.choiceRow}>{editableOrderStatuses.map((status) => <Choice key={status} label={status} selected={order.status === status} onPress={() => void updateStatus(order.id, status)} styles={styles} />)}<Action label="Cancel order" small danger onPress={() => { setCancellation({ id: order.id, kind: 'cancel' }); setReason(''); }} styles={styles} /></View></View> : <Text style={[styles.stateText, styles.dangerText]}>{order.status === 'CANCELLED' ? 'CANCELLED' : 'REJECTED'}</Text>}</View></View>) : <Text style={styles.muted}>No product orders in the database.</Text>}</Editor>
+    <Editor title="Product orders" styles={styles}>{loading ? <Loading styles={styles} /> : error ? <Text style={styles.errorText}>Unable to load orders from the backend.</Text> : orders.length ? orders.map((order) => <View key={order.id} style={styles.dataRow}><View style={styles.segmentPill}><Text style={styles.segmentText}>{order.segment}</Text></View><View style={styles.rowBody}><Text style={styles.rowTitle}>{order.id} · {order.buyer}</Text><Text style={styles.rowMeta}>{order.buyerEmail ?? 'Email not recorded'} · {order.summary}</Text><Text style={styles.rowMeta}>{order.itemCount} items · {formatMoney(order.totalInPaise)} · Payment: {order.paymentMethod === 'ONLINE' ? `Online · ${paymentChannelLabel(order.paymentChannel)}` : 'Cash on Delivery'}</Text><Text style={[styles.stateText, (order.approvalStatus === 'REJECTED' || order.status === 'CANCELLED') && styles.dangerText]}>Approval: {order.approvalStatus} · {order.status}</Text>{order.cancellationReason ? <Text style={[styles.rowMeta, styles.dangerText]}>Reason: {order.cancellationReason}</Text> : null}</View><View style={styles.rowActions}>{order.approvalStatus === 'PENDING' ? <><Action label="Approve" small onPress={() => void updateApproval(order.id, 'APPROVED')} styles={styles} /><Action label="Reject" small danger onPress={() => void updateApproval(order.id, 'REJECTED')} styles={styles} /></> : order.approvalStatus === 'APPROVED' && order.status !== 'CANCELLED' ? <View style={styles.statusPicker}><Text style={styles.rowMeta}>Fulfilment status</Text><View style={styles.choiceRow}>{editableOrderStatuses.map((status) => <Choice key={status} label={status} selected={order.status === status} onPress={() => void updateStatus(order.id, status)} styles={styles} />)}<Action label="Cancel order" small danger onPress={() => { setCancellation({ id: order.id, kind: 'cancel' }); setReason(''); }} styles={styles} /></View></View> : <Text style={[styles.stateText, styles.dangerText]}>{order.status === 'CANCELLED' ? 'CANCELLED' : 'REJECTED'}</Text>}</View></View>) : <Text style={styles.muted}>No product orders in the database.</Text>}</Editor>
     {cancellation ? <Editor title={cancellation.kind === 'reject' ? 'Reject order' : 'Cancel approved order'} styles={styles}><Text style={styles.rowMeta}>This reason is stored with the order and displayed to the buyer.</Text><Field label="Cancellation reason" value={reason} onChangeText={setReason} styles={styles} multiline /><View style={styles.actionRow}><Action label={cancellation.kind === 'reject' ? 'Confirm rejection' : 'Confirm cancellation'} danger onPress={() => void confirmCancellation()} styles={styles} /><Action label="Keep order" secondary onPress={() => { setCancellation(null); setReason(''); }} styles={styles} /></View></Editor> : null}
   </View>;
 }
@@ -232,7 +240,7 @@ function ServicesPanel({ token, bookings: liveBookings, loading, error, setMessa
 }
 
 function toAdminOrderPreview(order: OrderDetails): AdminOrderPreview {
-  return { id: order.id, buyer: order.buyerName ?? order.customerId, buyerEmail: order.buyerEmail, cancellationReason: order.cancellationReason, segment: order.buyerSegment ?? 'B2C', itemCount: order.itemCount, totalInPaise: order.totalInPaise, approvalStatus: order.approvalStatus ?? 'PENDING', status: order.status, summary: order.items.map((item) => `${item.quantity} × ${item.productName}`).join(' · ') };
+  return { id: order.id, buyer: order.buyerName ?? order.customerId, buyerEmail: order.buyerEmail, cancellationReason: order.cancellationReason, segment: order.buyerSegment ?? 'B2C', itemCount: order.itemCount, totalInPaise: order.totalInPaise, approvalStatus: order.approvalStatus ?? 'PENDING', status: order.status, paymentMethod: order.paymentMethod, paymentChannel: order.paymentChannel, summary: order.items.map((item) => `${item.quantity} × ${item.productName}`).join(' · ') };
 }
 
 function toAdminServicePreview(booking: ServiceBookingRecord): AdminServicePreview {
@@ -318,6 +326,7 @@ function ProductRow({ product, subcategoryName, onEdit, onRemove, busy, styles }
       <View style={styles.productDetails}>
         <Text numberOfLines={1} style={styles.rowTitle}>{product.name}</Text>
         <Text style={styles.rowMeta}>{product.category}{subcategoryName ? ` › ${subcategoryName}` : ''} · {product.brand}</Text>
+        <Text style={styles.rowMeta}>HSN: {product.hsnCode ?? 'Not assigned'}</Text>
         <Text style={styles.rowMeta}>
           B2C {formatMoney(b2cPriceInPaise)}
           {product.b2bPriceInPaise ? ` · B2B ${formatMoney(product.b2bPriceInPaise)}${product.minimumB2BQuantity ? ` (min ${product.minimumB2BQuantity})` : ''}` : ''}
@@ -340,7 +349,11 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
   const [form, setForm] = useState(emptyProduct);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [hsnSearch, setHsnSearch] = useState('');
   const categoriesQuery = useQuery({ queryKey: ['catalog', 'categories'], queryFn: () => getCatalogCategories() });
+  const hsnQuery = useQuery({ queryKey: ['admin', 'hsn-master'], queryFn: () => getAdminHsnMaster(token), enabled: Boolean(token) });
+  const hsnMaster: HsnMaster[] = hsnQuery.data ?? [];
+  const filteredHsn = hsnMaster.filter((hsn) => `${hsn.code} ${hsn.description}`.toLowerCase().includes(hsnSearch.trim().toLowerCase()));
   const categories: CatalogCategory[] = categoriesQuery.data ?? [];
   const categoryToSlugMap: Record<ProductCategory, string> = { 'Hardware': 'hardware', 'Electrical': 'electrical', 'Electronics': 'electronics', 'Paint': 'paint', 'PVC PIPE': 'plumbing', 'PVC & Plumbing': 'plumbing', 'Sanitary': 'sanitary', 'Others': 'others' };
   const selectedCategorySlug = categoryToSlugMap[form.category];
@@ -349,12 +362,13 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
 
   function edit(product: AdminProduct) {
     setEditingId(product.id);
-    setForm({ name: product.name, category: product.category, subcategoryId: product.subcategoryId ?? '', brand: product.brand, description: product.description, price: String((product.b2cPriceInPaise ?? product.priceInPaise) / 100), b2bPrice: product.b2bPriceInPaise ? String(product.b2bPriceInPaise / 100) : '', minimumB2BQuantity: product.minimumB2BQuantity ? String(product.minimumB2BQuantity) : '', compareAtPrice: product.compareAtPriceInPaise ? String(product.compareAtPriceInPaise / 100) : '', stock: String(product.stock), badge: product.badge ?? '', tone: product.tone, serviceAvailable: product.serviceAvailable, allowB2BBackorder: product.allowB2BBackorder ?? false, active: product.active, imageUrl: product.imageUrl ?? '' });
+    setForm({ name: product.name, category: product.category, subcategoryId: product.subcategoryId ?? '', hsnId: product.hsnId ?? '', brand: product.brand, description: product.description, price: String((product.b2cPriceInPaise ?? product.priceInPaise) / 100), b2bPrice: product.b2bPriceInPaise ? String(product.b2bPriceInPaise / 100) : '', minimumB2BQuantity: product.minimumB2BQuantity ? String(product.minimumB2BQuantity) : '', compareAtPrice: product.compareAtPriceInPaise ? String(product.compareAtPriceInPaise / 100) : '', stock: String(product.stock), badge: product.badge ?? '', tone: product.tone, serviceAvailable: product.serviceAvailable, allowB2BBackorder: product.allowB2BBackorder ?? false, codAvailable: product.codAvailable ?? true, active: product.active, imageUrl: product.imageUrl ?? '' });
+    setHsnSearch(product.hsnCode ?? '');
   }
 
   async function save() {
     const input: AdminProductInput = {
-      name: form.name.trim(), category: form.category, brand: form.brand.trim(), description: form.description.trim(), priceInPaise: Math.round(Number(form.price) * 100), stock: Number(form.stock), tone: form.tone, serviceAvailable: form.serviceAvailable, active: form.active,
+      name: form.name.trim(), category: form.category, ...(matchedCategory?.id ? { categoryId: matchedCategory.id } : {}), ...(form.hsnId ? { hsnId: form.hsnId } : {}), brand: form.brand.trim(), description: form.description.trim(), priceInPaise: Math.round(Number(form.price) * 100), stock: Number(form.stock), tone: form.tone, serviceAvailable: form.serviceAvailable, codAvailable: form.codAvailable, active: form.active,
       ...(form.b2bPrice ? { b2bPriceInPaise: Math.round(Number(form.b2bPrice) * 100) } : {}),
       ...(form.minimumB2BQuantity ? { minimumB2BQuantity: Number(form.minimumB2BQuantity) } : {}),
       ...(form.allowB2BBackorder ? { allowB2BBackorder: true } : {}),
@@ -363,11 +377,11 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
       ...(form.imageUrl.trim() ? { imageUrl: form.imageUrl.trim() } : {}),
       ...(form.subcategoryId ? { subcategoryId: form.subcategoryId } : {}),
     };
-    if (!input.name || !input.brand || !input.description || !Number.isFinite(input.priceInPaise) || !Number.isInteger(input.stock)) { setMessage('Complete the required product fields with valid numbers.'); return; }
+    if (!input.name || !input.brand || !input.description || !Number.isFinite(input.priceInPaise) || !Number.isInteger(input.stock) || !form.hsnId) { setMessage('Complete all required fields and select an HSN code.'); return; }
     setBusy(true);
     try {
       if (editingId) await updateAdminProduct(token, editingId, input); else await createAdminProduct(token, input);
-      setForm(emptyProduct); setEditingId(null); setMessage(editingId ? 'Product updated.' : 'Product published.'); await onChanged();
+      setForm(emptyProduct); setEditingId(null); setHsnSearch(''); setMessage(editingId ? 'Product updated.' : 'Product published.'); await onChanged();
     } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to save product.'); } finally { setBusy(false); }
   }
 
@@ -393,14 +407,45 @@ function ProductsPanel({ token, products, loading, onChanged, setMessage, styles
       </View>
       <Text style={styles.fieldLabel}>Category</Text><View style={styles.choiceRow}>{productCategories.map((category) => <Choice key={category} label={category} selected={form.category === category} onPress={() => setForm({ ...form, category, subcategoryId: '' })} styles={styles} />)}</View>
       {subcategories.length > 0 ? <><Text style={styles.fieldLabel}>Subcategory</Text><View style={styles.choiceRow}>{subcategories.map((sub) => <Choice key={sub.id} label={sub.name} selected={form.subcategoryId === sub.id} onPress={() => setForm({ ...form, subcategoryId: sub.id })} styles={styles} />)}</View></> : null}
+      <HsnSelect value={form.hsnId} search={hsnSearch} options={filteredHsn} onSearch={setHsnSearch} onSelect={(hsn) => { setForm((current) => ({ ...current, hsnId: hsn.id })); setHsnSearch(`${hsn.code} · ${hsn.description}`); }} styles={styles} />
       <View style={styles.formGrid}>
         <Field label="Description" value={form.description} multiline onChangeText={(description) => setForm({ ...form, description })} styles={styles} wide />
         <Field label="Product image URL" value={form.imageUrl} onChangeText={(imageUrl) => setForm({ ...form, imageUrl })} styles={styles} wide />
       </View>
-      <View style={styles.choiceRow}><Choice label="Upload image" selected={false} onPress={() => void uploadImage()} styles={styles} /><Choice label="Installation available" selected={form.serviceAvailable} onPress={() => setForm({ ...form, serviceAvailable: !form.serviceAvailable })} styles={styles} /><Choice label="B2B backorder allowed" selected={form.allowB2BBackorder} onPress={() => setForm({ ...form, allowB2BBackorder: !form.allowB2BBackorder })} styles={styles} /><Choice label="Visible in store" selected={form.active} onPress={() => setForm({ ...form, active: !form.active })} styles={styles} /></View>
-      <View style={styles.actionRow}><Action label={editingId ? 'Save changes' : 'Add product'} onPress={() => void save()} busy={busy} styles={styles} />{editingId ? <Action label="Cancel" secondary onPress={() => { setEditingId(null); setForm(emptyProduct); }} styles={styles} /> : null}</View>
+      <View style={styles.choiceRow}><Choice label="Upload image" selected={false} onPress={() => void uploadImage()} styles={styles} /><Choice label="Installation available" selected={form.serviceAvailable} onPress={() => setForm({ ...form, serviceAvailable: !form.serviceAvailable })} styles={styles} /><Choice label="B2B backorder allowed" selected={form.allowB2BBackorder} onPress={() => setForm({ ...form, allowB2BBackorder: !form.allowB2BBackorder })} styles={styles} /><Choice label="COD available" selected={form.codAvailable} onPress={() => setForm({ ...form, codAvailable: !form.codAvailable })} styles={styles} /><Choice label="Visible in store" selected={form.active} onPress={() => setForm({ ...form, active: !form.active })} styles={styles} /></View>
+      <View style={styles.actionRow}><Action label={editingId ? 'Save changes' : 'Add product'} onPress={() => void save()} busy={busy} styles={styles} />{editingId ? <Action label="Cancel" secondary onPress={() => { setEditingId(null); setForm(emptyProduct); setHsnSearch(''); }} styles={styles} /> : null}</View>
     </Editor>
     <Editor title={`Products (${products.length})`} styles={styles}>{loading ? <Loading styles={styles} /> : products.map((product) => { const subName = product.subcategoryId ? categories.flatMap((c) => c.subcategories).find((s) => s.id === product.subcategoryId)?.name : undefined; return <ProductRow key={product.id} product={product} subcategoryName={subName} onEdit={() => edit(product)} onRemove={() => void remove(product.id)} busy={busy} styles={styles} />; })}</Editor>
+  </View>;
+}
+
+function HsnMasterPanel({ token, onChanged, setMessage, styles }: { token: string; onChanged(): Promise<void>; setMessage(value: string): void; styles: Styles }) {
+  const hsnQuery = useQuery({ queryKey: ['admin', 'hsn-master'], queryFn: () => getAdminHsnMaster(token) });
+  const hsnMaster = hsnQuery.data ?? [];
+  const [code, setCode] = useState('');
+  const [description, setDescription] = useState('');
+  const [rate, setRate] = useState('18');
+  const [busy, setBusy] = useState(false);
+  async function addHsn() {
+    const total = Number(rate);
+    if (!/^\d{4,8}$/.test(code.trim()) || description.trim().length < 3 || !Number.isFinite(total) || total < 0 || total > 100) { setMessage('Enter a valid HSN code, description and GST rate.'); return; }
+    setBusy(true);
+    try { await createAdminHsnMaster(token, { code: code.trim(), description: description.trim(), cgstRate: total / 2, sgstRate: total / 2, igstRate: total }); await hsnQuery.refetch(); await onChanged(); setCode(''); setDescription(''); setRate('18'); setMessage('HSN added with its GST rate.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to add HSN.'); } finally { setBusy(false); }
+  }
+  return <View style={styles.stack}>
+    <Editor title="Add HSN number" styles={styles}><View style={styles.formGrid}><Field label="HSN code" value={code} onChangeText={setCode} keyboardType="number-pad" styles={styles} /><Field label="Description" value={description} onChangeText={setDescription} styles={styles} /><Field label="Total GST rate (%)" value={rate} onChangeText={setRate} keyboardType="decimal-pad" styles={styles} /></View><Text style={styles.rowMeta}>CGST and SGST will be half of the total rate; IGST will use the total rate.</Text><Action label="Add to master data" small onPress={() => void addHsn()} busy={busy} styles={styles} /></Editor>
+    <Editor title={`HSN master data (${hsnMaster.length})`} styles={styles}>{hsnMaster.map((hsn) => <View key={hsn.id} style={styles.dataRow}><View style={styles.rowBody}><Text style={styles.rowTitle}>{hsn.code}</Text><Text style={styles.rowMeta}>{hsn.description} · GST {hsn.igstRate}% (CGST {hsn.cgstRate}% + SGST {hsn.sgstRate}%)</Text></View></View>)}</Editor>
+  </View>;
+}
+
+function HsnSelect({ value, search, options, onSearch, onSelect, styles }: { value: string; search: string; options: HsnMaster[]; onSearch(value: string): void; onSelect(hsn: HsnMaster): void; styles: Styles }) {
+  const [open, setOpen] = useState(false);
+  const selected = options.find((hsn) => hsn.id === value);
+  return <View style={styles.hsnSelectWrap}>
+    <Text style={styles.fieldLabel}>HSN CODE</Text>
+    <TextInput value={search} onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 150)} onChangeText={(text) => { onSearch(text); setOpen(true); }} placeholder="Type HSN code or description to search" placeholderTextColor={styles.placeholder.color} style={styles.input} accessibilityLabel="Search HSN code" />
+    {open ? <View style={styles.hsnOptions}><ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled" style={styles.hsnOptionsScroll}>{options.length ? options.map((hsn) => <Pressable key={hsn.id} accessibilityRole="radio" accessibilityState={{ checked: value === hsn.id }} onPressIn={() => { onSelect(hsn); setOpen(false); }} style={[styles.hsnOption, value === hsn.id && styles.hsnOptionActive]}><Text numberOfLines={1} style={[styles.hsnOptionText, value === hsn.id && styles.hsnOptionTextActive]}>{value === hsn.id ? '✓ ' : ''}{hsn.code} · {hsn.description}</Text></Pressable>) : <Text style={styles.rowMeta}>No matching HSN found.</Text>}</ScrollView></View> : null}
+    {selected && !open ? <Text style={styles.selectedHsn}>Selected: {selected.code} · {selected.description}</Text> : null}
   </View>;
 }
 
@@ -442,7 +487,21 @@ function UsersPanel({ token, users, currentUserId, loading, onChanged, setMessag
 }
 
 async function chooseAndUpload(token: string, onUploaded: (url: string) => void, setMessage: (value: string) => void, setBusy: (value: boolean) => void) {
-  if (Platform.OS !== 'web' || typeof document === 'undefined') { setMessage('Paste an image URL on mobile. File upload is available in the web admin.'); return; }
+  if (Platform.OS !== 'web') {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) { setMessage('Allow photo access to upload a product image.'); return; }
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.85, allowsEditing: true });
+    const asset = result.canceled ? undefined : result.assets[0];
+    if (!asset) return;
+    setBusy(true);
+    try {
+      const file: NativeUploadFile = { uri: asset.uri, type: asset.mimeType ?? 'image/jpeg', name: asset.fileName ?? `product-${Date.now()}.jpg` };
+      const uploaded = await uploadAdminImage(token, file, file.name);
+      onUploaded(uploaded.url); setMessage('Image uploaded. Save the item to publish it.');
+    } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to upload image.'); } finally { setBusy(false); }
+    return;
+  }
+  if (typeof document === 'undefined') return;
   const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
   input.onchange = async () => { const file = input.files?.[0]; if (!file) return; setBusy(true); try { const uploaded = await uploadAdminImage(token, file, file.name); onUploaded(uploaded.url); setMessage('Image uploaded. Save the item to publish it.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to upload image.'); } finally { setBusy(false); } };
   input.click();
@@ -519,6 +578,14 @@ const createStyles = ({ colors, desktop, tablet, compact }: { colors: ThemeColor
   input: { minHeight: desktop ? 46 : 42, paddingHorizontal: spacing.sm, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, backgroundColor: colors.surfaceSunken, color: colors.cream, fontSize: 13 },
   inputMultiline: { minHeight: desktop ? 90 : 72, paddingVertical: spacing.xs, textAlignVertical: 'top' },
   placeholder: { color: colors.muted },
+  hsnSelectWrap: { gap: 4, zIndex: 20 },
+  hsnOptions: { maxHeight: 210, borderWidth: 1, borderColor: colors.line, borderRadius: radius.sm, backgroundColor: colors.surfaceSunken, overflow: 'hidden' },
+  hsnOptionsScroll: { maxHeight: 208 },
+  hsnOption: { paddingHorizontal: spacing.sm, paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.line },
+  hsnOptionActive: { backgroundColor: colors.tealTint },
+  hsnOptionText: { color: colors.muted, fontSize: 12, fontWeight: '700' },
+  hsnOptionTextActive: { color: colors.teal },
+  selectedHsn: { color: colors.teal, fontSize: 11, fontWeight: '800' },
 
   choiceRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   choice: { minHeight: desktop ? 36 : 34, maxWidth: 260, paddingHorizontal: spacing.sm, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface },

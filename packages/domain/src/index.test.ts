@@ -26,6 +26,7 @@ test('cart total uses integer paise', () => {
         stock: 25,
         tone: 'teal',
         serviceAvailable: true,
+        codAvailable: true,
       },
       quantity: 2,
     },

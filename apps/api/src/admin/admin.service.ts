@@ -7,6 +7,7 @@ import type {
   AdminOverview,
   AdminProduct,
   AdminProductInput,
+  AdminHsnInput,
   AdminUserProfile,
   ContractorAdminDetails,
   Banner,
@@ -20,6 +21,44 @@ import { CatalogService } from '../catalog/catalog.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrdersService } from '../orders/orders.service';
 import { ServicesService } from '../services/services.service';
+
+const fallbackHsnMaster = [
+  { id: '00000000-0000-4000-8000-000000002001', code: '3917', description: 'Plastic pipes, tubes and fittings', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002002', code: '6910', description: 'Ceramic sanitary fixtures', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002003', code: '3209', description: 'Water-based paints and varnishes', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002004', code: '8536', description: 'Electrical switching and connection apparatus', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002005', code: '8509', description: 'Domestic electro-mechanical appliances', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002006', code: '7318', description: 'Iron or steel fasteners', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002007', code: '3926', description: 'Other plastic articles', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002008', code: '8481', description: 'Taps, cocks, valves and similar appliances', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002009', code: '7412', description: 'Copper tube or pipe fittings', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002010', code: '7307', description: 'Iron or steel tube or pipe fittings', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002011', code: '3922', description: 'Plastic sanitary ware', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002012', code: '8537', description: 'Boards, panels and consoles for electric control', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002013', code: '8544', description: 'Insulated wires and cables', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002014', code: '8539', description: 'Electric filament and LED lamps', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002015', code: '8516', description: 'Electric water heaters and other electro-thermic appliances', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002016', code: '8413', description: 'Pumps for liquids', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002017', code: '3208', description: 'Paints and varnishes in non-aqueous medium', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002018', code: '3210', description: 'Other paints and varnishes', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002019', code: '3214', description: 'Putty, mastics and painters fillings', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002020', code: '9603', description: 'Brooms, brushes and paint brushes', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002021', code: '7315', description: 'Iron or steel chain', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002022', code: '8201', description: 'Agricultural hand tools', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002023', code: '8203', description: 'Pliers, pincers and similar hand tools', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002024', code: '8205', description: 'Other hand tools', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002025', code: '8433', description: 'Harvesting or threshing machinery', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002026', code: '8436', description: 'Other agricultural machinery', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002027', code: '8211', description: 'Knives with cutting blades', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002028', code: '9613', description: 'Cigarette lighters and other lighters', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002029', code: '8513', description: 'Portable electric lamps', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002030', code: '3923', description: 'Plastic containers and packing articles', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002031', code: '8302', description: 'Base metal mountings and fittings', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002032', code: '7326', description: 'Other articles of iron or steel', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002033', code: '6912', description: 'Ceramic tableware and household articles', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002034', code: '3402', description: 'Organic surface-active and cleaning preparations', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+  { id: '00000000-0000-4000-8000-000000002035', code: '3506', description: 'Prepared glues and adhesives', cgstRate: 9, sgstRate: 9, igstRate: 18, active: true },
+];
 
 @Injectable()
 export class AdminService {
@@ -84,6 +123,27 @@ export class AdminService {
 
   listProducts(): Promise<AdminProduct[]> {
     return this.catalog.findAllAdmin();
+  }
+
+  async listHsnMaster() {
+    if (!process.env.DATABASE_URL) return fallbackHsnMaster;
+    return this.prisma.hsnMaster.findMany({ where: { active: true }, orderBy: { code: 'asc' }, select: { id: true, code: true, description: true, cgstRate: true, sgstRate: true, igstRate: true, active: true } });
+  }
+
+  async createHsnMaster(input: AdminHsnInput) {
+    if (!process.env.DATABASE_URL) {
+      const existing = fallbackHsnMaster.find((hsn) => hsn.code === input.code);
+      if (existing) { Object.assign(existing, input); return existing; }
+      const created = { id: randomUUID(), ...input, active: true };
+      fallbackHsnMaster.push(created);
+      return created;
+    }
+    return this.prisma.hsnMaster.upsert({
+      where: { code: input.code },
+      update: { description: input.description, cgstRate: input.cgstRate, sgstRate: input.sgstRate, igstRate: input.igstRate, active: true },
+      create: { code: input.code, description: input.description, cgstRate: input.cgstRate, sgstRate: input.sgstRate, igstRate: input.igstRate },
+      select: { id: true, code: true, description: true, cgstRate: true, sgstRate: true, igstRate: true, active: true },
+    });
   }
 
   createProduct(input: AdminProductInput) {

@@ -119,6 +119,12 @@ export function CatalogCategoryFilter({
       <View style={styles.body}>
         <Text style={styles.sectionLabel}>Categories</Text>
         <View style={styles.optionGrid}>
+          <FilterOption
+            label="All categories"
+            selected={!selectedCategoryIds.length && !selectedSubcategoryIds.length}
+            onPress={onClearAll}
+            styles={styles}
+          />
           {categoryData.map((category) => (
             <FilterOption
               key={category.id}

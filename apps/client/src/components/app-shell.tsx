@@ -24,6 +24,7 @@ import { CustomerStoreShell } from '@/components/customer-store-shell';
 import { TopBrands } from '@/components/top-brands';
 import { FooterSocialLinks } from '@/components/footer-social-links';
 import { getSearchHistory, addSearchTerm, removeSearchTerm } from '@/lib/search-history';
+import { FloatingContactActions } from '@/components/floating-contact-actions';
 
 type AppIconName = 'home' | 'shop' | 'cart' | 'account' | 'business' | 'orders' | 'workspace' | 'requests' | 'profile' | 'saved' | 'menu';
 
@@ -189,6 +190,7 @@ export function AppShell({ children, scroll = true, entry = false }: PropsWithCh
 
         <Toast styles={styles} desktop={desktop} />
       </SafeAreaView>
+      {!pathname.startsWith('/admin') ? <FloatingContactActions /> : null}
     </>
   );
 }

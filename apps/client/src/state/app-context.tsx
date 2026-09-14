@@ -1,4 +1,4 @@
-import type { Product } from '@sirohi/contracts';
+import type { PaymentChannel, Product } from '@sirohi/contracts';
 import { createContext, useContext, useEffect, useMemo, useState, useRef, type PropsWithChildren } from 'react';
 import { Platform } from 'react-native';
 
@@ -21,6 +21,7 @@ export interface CustomerOrder {
   itemCount: number;
   deliveryMode: 'standard' | 'express';
   paymentMethod: 'COD' | 'ONLINE';
+  paymentChannel?: PaymentChannel;
   address: string;
   cancellationReason?: string;
   items: CustomerOrderItem[];
@@ -161,7 +162,7 @@ export function AppStateProvider({ children }: PropsWithChildren) {
     placeOrder(input, orderId) {
       const order: CustomerOrder = {
         ...input,
-        id: orderId ?? `SP-${String(Date.now()).slice(-8)}`,
+        id: orderId ?? String(Math.floor(100000000000 + Math.random() * 900000000000)),
         createdAt: new Date().toISOString(),
         status: 'CONFIRMED',
       };

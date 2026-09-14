@@ -1,6 +1,6 @@
 import { radius, spacing, type ThemeColors } from '@sirohi/design-tokens';
 import { formatMoney } from '@sirohi/domain';
-import type { CustomerAddress, CustomerAddressInput, CustomerProfileUpdate, OrderDetails, PublicUser } from '@sirohi/contracts';
+import { paymentChannelLabel, type CustomerAddress, type CustomerAddressInput, type CustomerProfileUpdate, type OrderDetails, type PublicUser } from '@sirohi/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { createElement, useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ import { AppShell } from '@/components/app-shell';
 import { ProductVisual } from '@/components/product-visual';
 import { ScreenHeading } from '@/components/screen-heading';
 import { SessionLoading } from '@/components/session-loading';
-import { getCatalog, getCustomerAddresses, getOrders, saveCustomerAddress, updateCustomerAddress } from '@/lib/api';
+import { downloadOrderBill, getCatalog, getCustomerAddresses, getOrders, saveCustomerAddress, updateCustomerAddress } from '@/lib/api';
 import { ADDRESS_LABEL_OPTIONS, INDIAN_STATE_OPTIONS } from '@/lib/address-options';
 import { getRoleHomePath } from '@/lib/role-navigation';
 import { useAppState, type CustomerOrder } from '@/state/app-context';
@@ -86,7 +86,7 @@ export default function DashboardScreen() {
 
         {tab === 'account' ? <AccountPanel user={user} token={token!} addresses={addressesQuery.data ?? []} addressesLoading={addressesQuery.isLoading} onAddressesChanged={() => addressesQuery.refetch()} onUpdateProfile={updateProfile} onSignOut={() => void logout().then(() => router.replace('/'))} showNotice={showNotice} styles={styles} /> : null}
 
-        {tab === 'orders' ? <><OrdersPanel orders={visibleOrders} loading={ordersQuery.isLoading} compact={width < 480} styles={styles} onShop={() => router.push('/catalog')} />{ordersQuery.isError ? <Text style={styles.error}>Unable to load order history from the backend: {ordersQuery.error instanceof Error ? ordersQuery.error.message : 'Unknown error'}</Text> : null}</> : null}
+        {tab === 'orders' ? <><OrdersPanel orders={visibleOrders} loading={ordersQuery.isLoading} compact={width < 480} styles={styles} onShop={() => router.push('/catalog')} token={token} onMessage={showNotice} />{ordersQuery.isError ? <Text style={styles.error}>Unable to load order history from the backend: {ordersQuery.error instanceof Error ? ordersQuery.error.message : 'Unknown error'}</Text> : null}</> : null}
 
         {tab === 'saved' ? (
           <View style={styles.panel}>
@@ -282,6 +282,7 @@ function toCustomerOrder(order: OrderDetails): CustomerOrder {
     itemCount: order.itemCount,
     deliveryMode: 'standard',
     paymentMethod: order.paymentMethod,
+    paymentChannel: order.paymentChannel,
     address: order.deliveryAddress,
     cancellationReason: order.cancellationReason,
     items: order.items.map((item) => ({ productId: item.productId, name: item.productName, quantity: item.quantity, unitPriceInPaise: item.unitPriceInPaise })),
@@ -296,7 +297,15 @@ function Summary({ value, label, styles }: { value: string; label: string; style
   return <View style={styles.summaryCard}><Text style={styles.summaryValue}>{value}</Text><Text style={styles.summaryLabel}>{label}</Text></View>;
 }
 
-function OrdersPanel({ orders, loading, compact, styles, onShop }: { orders: CustomerOrder[]; loading: boolean; compact: boolean; styles: ReturnType<typeof createStyles>; onShop(): void }) {
+function OrdersPanel({ orders, loading, compact, styles, onShop, token, onMessage }: { orders: CustomerOrder[]; loading: boolean; compact: boolean; styles: ReturnType<typeof createStyles>; onShop(): void; token: string | null; onMessage(message: string): void }) {
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const download = async (id: string) => {
+    if (!token) return;
+    setDownloadingId(id);
+    try { await downloadOrderBill(token, id); onMessage('Bill download started.'); }
+    catch (error) { onMessage(error instanceof Error ? error.message : 'Unable to download this bill.'); }
+    finally { setDownloadingId(null); }
+  };
   if (loading) return <View style={styles.panel}><Text style={styles.loadingText}>Loading order history…</Text></View>;
   if (!orders.length) return <View style={styles.panel}><EmptyState title="You have not placed an order yet" copy="Products you buy will appear here immediately after checkout." action="Start shopping" onPress={onShop} styles={styles} /></View>;
   return (
@@ -306,8 +315,8 @@ function OrdersPanel({ orders, loading, compact, styles, onShop }: { orders: Cus
         <View style={[styles.orderCard, compact && styles.orderCardCompact]} key={order.id}>
           <View style={styles.orderTop}><View style={styles.orderIdentity}><Text style={[styles.orderId, compact && styles.orderIdCompact]} numberOfLines={1} ellipsizeMode="middle">{order.id}</Text><Text style={styles.orderDate}>{new Date(order.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</Text></View><View style={styles.orderBadges}><View style={[styles.statusPill, order.approvalStatus === 'REJECTED' && styles.statusPillDanger, order.approvalStatus === 'PENDING' && styles.statusPillPending]}><Text numberOfLines={1} style={[styles.statusText, compact && styles.statusTextCompact, order.approvalStatus === 'REJECTED' && styles.statusTextDanger, order.approvalStatus === 'PENDING' && styles.statusTextPending]}>{order.approvalStatus === 'PENDING' ? 'PENDING APPROVAL' : order.approvalStatus === 'REJECTED' ? 'REJECTED' : formatOrderStatus(order.status)}</Text></View><View style={[styles.paymentPill, order.paymentMethod === 'ONLINE' ? styles.paymentPillPaid : styles.paymentPillCod]}><Text style={styles.paymentPillText}>{order.paymentMethod === 'ONLINE' ? 'PAID' : 'COD'}</Text></View></View></View>
           <View style={styles.orderItems}>{order.items.map((item) => <Text style={styles.orderItem} numberOfLines={compact ? 2 : undefined} key={item.productId}>{item.quantity} × {item.name}</Text>)}</View>
-          <View style={styles.orderBottom}><View style={styles.orderDetails}><Text style={styles.orderMeta}>{order.itemCount} {order.itemCount === 1 ? 'item' : 'items'} · {order.deliveryMode === 'express' ? 'Express delivery' : 'Standard delivery'}</Text><Text style={[styles.paymentMeta, order.paymentMethod === 'ONLINE' ? styles.paymentPaid : styles.paymentCod]}>Payment: {order.paymentMethod === 'ONLINE' ? 'Paid' : 'COD'}</Text><Text style={styles.orderAddress} numberOfLines={1}>{order.address}</Text></View><Text style={styles.orderTotal}>{formatMoney(order.totalInPaise)}</Text></View>
-          <Text style={styles.approvalText}>{order.approvalStatus === 'PENDING' ? 'Waiting for admin approval' : order.approvalStatus === 'REJECTED' ? 'Admin rejected this order' : `Fulfilment status: ${formatOrderStatus(order.status)}`}</Text>{order.cancellationReason ? <Text style={styles.approvalText}>Cancellation reason: {order.cancellationReason}</Text> : null}<View style={[styles.orderProgress, compact && styles.orderProgressCompact]}><ProgressStep label="Submitted" active compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Packed" active={order.status === 'PACKED' || order.status === 'DISPATCHED' || order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'} compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Dispatched" active={order.status === 'DISPATCHED' || order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'} compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Out for delivery" active={order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'} compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Delivered" active={order.status === 'DELIVERED'} compact={compact} /></View>
+          <View style={styles.orderBottom}><View style={styles.orderDetails}><Text style={styles.orderMeta}>{order.itemCount} {order.itemCount === 1 ? 'item' : 'items'} · {order.deliveryMode === 'express' ? 'Express delivery' : 'Standard delivery'}</Text><Text style={[styles.paymentMeta, order.paymentMethod === 'ONLINE' ? styles.paymentPaid : styles.paymentCod]}>Payment: {order.paymentMethod === 'ONLINE' ? `Paid · ${paymentChannelLabel(order.paymentChannel)}` : 'COD'}</Text><Text style={styles.orderAddress} numberOfLines={1}>{order.address}</Text></View><Text style={styles.orderTotal}>{formatMoney(order.totalInPaise)}</Text></View>
+          <Text style={styles.approvalText}>{order.approvalStatus === 'PENDING' ? 'Waiting for admin approval' : order.approvalStatus === 'REJECTED' ? 'Admin rejected this order' : `Fulfilment status: ${formatOrderStatus(order.status)}`}</Text>{order.cancellationReason ? <Text style={styles.approvalText}>Cancellation reason: {order.cancellationReason}</Text> : null}<Pressable accessibilityRole="button" disabled={downloadingId === order.id} onPress={() => void download(order.id)} style={[styles.billButton, downloadingId === order.id && styles.billButtonDisabled]}><Text style={styles.billButtonText}>{downloadingId === order.id ? 'Preparing bill…' : 'Download bill PDF'}</Text></Pressable><View style={[styles.orderProgress, compact && styles.orderProgressCompact]}><ProgressStep label="Submitted" active compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Packed" active={order.status === 'PACKED' || order.status === 'DISPATCHED' || order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'} compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Dispatched" active={order.status === 'DISPATCHED' || order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'} compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Out for delivery" active={order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'} compact={compact} /><View style={styles.progressLine} /><ProgressStep label="Delivered" active={order.status === 'DELIVERED'} compact={compact} /></View>
         </View>
       ))}
     </View>
@@ -346,6 +355,9 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   loadingText: { color: colors.muted, fontSize: 13 },
   shopButton: { minHeight: 48, paddingHorizontal: spacing.xl, borderRadius: radius.md, backgroundColor: colors.copper, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start' },
   shopButtonText: { color: '#FFFFFF', fontSize: 13, fontWeight: '900' },
+  billButton: { minHeight: 42, paddingHorizontal: spacing.lg, borderRadius: radius.sm, backgroundColor: colors.teal, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start' },
+  billButtonDisabled: { opacity: 0.6 },
+  billButtonText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
   technicianButton: { minHeight: 48, paddingHorizontal: spacing.lg, borderRadius: radius.md, backgroundColor: colors.teal, alignItems: 'center', justifyContent: 'center' },
   technicianButtonText: { color: '#FFFFFF', fontSize: 13, fontWeight: '900' },
   summaryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },

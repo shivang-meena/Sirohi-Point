@@ -34,6 +34,7 @@ const categoryIdsByLegacyName: Record<string, string> = {
   Sanitary: '00000000-0000-4000-8000-000000001006',
   Others: '00000000-0000-4000-8000-000000001007',
 };
+const fallbackHsnCodeByCategory: Record<string, string> = { Hardware: '7318', Electrical: '8536', Electronics: '8509', Paint: '3209', 'PVC PIPE': '3917', 'PVC & Plumbing': '3917', Sanitary: '6910', Others: '3926' };
 
 const fallbackCategories = [
   {
@@ -140,11 +141,13 @@ export class CatalogService {
       ...product,
       b2cPriceInPaise: product.b2cPriceInPaise ?? product.priceInPaise,
       categoryId: categoryIdsByLegacyName[product.category] ?? categoryIdsByLegacyName.Others,
+      hsnCode: fallbackHsnCodeByCategory[product.category] ?? '3926',
       ...(inferFallbackSubcategorySlug(product)
         ? { subcategoryId: fallbackSubcategoryIdBySlug[inferFallbackSubcategorySlug(product)!] }
         : {}),
       minimumB2BQuantity: product.minimumB2BQuantity ?? 1,
       allowB2BBackorder: product.allowB2BBackorder ?? false,
+      codAvailable: product.codAvailable ?? true,
       active: true,
     }),
   );
@@ -186,7 +189,7 @@ export class CatalogService {
     return this.findAllForSegment(query, 'B2C');
   }
 
-  async findAllForSegment(query: CatalogQuery, segment: CatalogSegment): Promise<Product[]> {
+  async findAllForSegment(query: CatalogQuery, segment: CatalogSegment, priceVisible = true): Promise<Product[]> {
     const subcategoryIds = await this.resolveSubcategoryIds(query.subcategoryIds);
     if (subcategoryIds === null) return [];
     await this.validateSubcategoryFilter(query.categoryIds, subcategoryIds);
@@ -194,7 +197,7 @@ export class CatalogService {
       .filter((product) => product.active)
       .filter((product) => !query.categoryIds?.length || query.categoryIds.includes(product.categoryId ?? ''))
       .filter((product) => !subcategoryIds?.length || subcategoryIds.includes(product.subcategoryId ?? ''))
-      .map((product) => this.toPublicProduct(product, segment));
+      .map((product) => this.toPublicProduct(product, segment, priceVisible));
     const search = query.search?.toLowerCase();
     if (query.category) products = products.filter((product) => product.category === query.category);
     if (search) {
@@ -212,12 +215,12 @@ export class CatalogService {
     return this.findOneForSegment(id, 'B2C');
   }
 
-  async findOneForSegment(id: string, segment: CatalogSegment): Promise<Product> {
+  async findOneForSegment(id: string, segment: CatalogSegment, priceVisible = true): Promise<Product> {
     const product = (await this.readAdminCatalog()).find(
       (item) => item.id === id && item.active,
     );
     if (!product) throw new NotFoundException(`Product ${id} was not found`);
-    return this.toPublicProduct(product, segment);
+    return this.toPublicProduct(product, segment, priceVisible);
   }
 
   async findAllAdmin(): Promise<AdminProduct[]> {
@@ -235,6 +238,7 @@ export class CatalogService {
         name: input.name,
         category: input.category,
         categoryId: input.categoryId ?? categoryIdsByLegacyName[input.category] ?? categoryIdsByLegacyName.Others,
+        ...(input.hsnId ? { hsnId: input.hsnId } : {}),
         ...(input.subcategoryId ? { subcategoryId: input.subcategoryId } : {}),
         brand: input.brand,
         description: input.description,
@@ -243,6 +247,7 @@ export class CatalogService {
         ...(input.b2bPriceInPaise !== undefined ? { b2bPriceInPaise: input.b2bPriceInPaise } : {}),
         minimumB2BQuantity: input.minimumB2BQuantity ?? 1,
         allowB2BBackorder: input.allowB2BBackorder ?? false,
+        codAvailable: input.codAvailable ?? true,
         ...(input.specifications ? { specifications: input.specifications } : {}),
         ...(input.compareAtPriceInPaise ? { compareAtPriceInPaise: input.compareAtPriceInPaise } : {}),
         rating: 0,
@@ -259,12 +264,14 @@ export class CatalogService {
     }
 
     const categoryId = await this.resolveCategoryId(input);
+    await this.validateSubcategoryForCategory(input.subcategoryId, categoryId);
     const record = await this.prisma.product.create({
       data: {
         id,
         slug,
         name: input.name,
         category: { connect: { id: categoryId } },
+        ...(input.hsnId ? { hsn: { connect: { id: input.hsnId } } } : {}),
         ...(input.subcategoryId ? { subcategory: { connect: { id: input.subcategoryId } } } : {}),
         brand: input.brand,
         description: input.description,
@@ -273,6 +280,7 @@ export class CatalogService {
         b2bPriceInPaise: input.b2bPriceInPaise,
         minimumB2BQuantity: input.minimumB2BQuantity ?? 1,
         allowB2BBackorder: input.allowB2BBackorder ?? false,
+        codAvailable: input.codAvailable ?? true,
         specifications: input.specifications,
         compareAtPriceInPaise: input.compareAtPriceInPaise,
         badge: input.badge,
@@ -282,7 +290,7 @@ export class CatalogService {
         imageUrl: input.imageUrl,
         inventory: { create: { onHand: input.stock, reserved: 0, available: input.stock } },
       },
-      include: { inventory: true, category: true, subcategory: true },
+      include: { inventory: true, category: true, subcategory: true, hsn: true },
     });
     return this.mapRecord(record);
   }
@@ -301,6 +309,7 @@ export class CatalogService {
         b2cPriceInPaise,
         minimumB2BQuantity: input.minimumB2BQuantity ?? existing.minimumB2BQuantity ?? 1,
         allowB2BBackorder: input.allowB2BBackorder ?? existing.allowB2BBackorder ?? false,
+        codAvailable: input.codAvailable ?? existing.codAvailable ?? true,
       };
       if (!input.compareAtPriceInPaise) delete product.compareAtPriceInPaise;
       if (!input.badge) delete product.badge;
@@ -313,11 +322,13 @@ export class CatalogService {
     const record = await this.prisma.$transaction(async (tx) => {
       const inventory = await tx.inventory.findUnique({ where: { productId: id } });
       const categoryId = await this.resolveCategoryId(input, tx);
+      await this.validateSubcategoryForCategory(input.subcategoryId, categoryId, tx);
       return tx.product.update({
       where: { id },
       data: {
         name: input.name,
         category: { connect: { id: categoryId } },
+        ...(input.hsnId ? { hsn: { connect: { id: input.hsnId } } } : { hsn: { disconnect: true } }),
         ...(input.subcategoryId ? { subcategory: { connect: { id: input.subcategoryId } } } : {}),
         brand: input.brand,
         description: input.description,
@@ -326,6 +337,7 @@ export class CatalogService {
         b2bPriceInPaise: input.b2bPriceInPaise,
         minimumB2BQuantity: input.minimumB2BQuantity ?? 1,
         allowB2BBackorder: input.allowB2BBackorder ?? false,
+        codAvailable: input.codAvailable ?? true,
         specifications: input.specifications,
         compareAtPriceInPaise: input.compareAtPriceInPaise,
         badge: input.badge,
@@ -340,7 +352,7 @@ export class CatalogService {
           },
         },
       },
-      include: { inventory: true, category: true, subcategory: true },
+      include: { inventory: true, category: true, subcategory: true, hsn: true },
       });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     return this.mapRecord(record);
@@ -353,14 +365,14 @@ export class CatalogService {
       product.active = false;
       return product;
     }
-    const record = await this.prisma.product.update({ where: { id }, data: { active: false }, include: { inventory: true, category: true, subcategory: true } });
+    const record = await this.prisma.product.update({ where: { id }, data: { active: false }, include: { inventory: true, category: true, subcategory: true, hsn: true } });
     return this.mapRecord(record);
   }
 
   private async readAdminCatalog(): Promise<AdminProduct[]> {
     if (!process.env.DATABASE_URL) return this.memoryProducts;
     try {
-      const records = await this.prisma.product.findMany({ include: { inventory: true, category: true, subcategory: true }, orderBy: { updatedAt: 'desc' } });
+    const records = await this.prisma.product.findMany({ include: { inventory: true, category: true, subcategory: true, hsn: true }, orderBy: { updatedAt: 'desc' } });
       const products = records.map((record) => this.mapRecord(record));
       return products.some((product) => product.active) ? products : this.memoryProducts;
     } catch {
@@ -374,6 +386,8 @@ export class CatalogService {
     slug: string;
     category: { name: string };
     categoryId: string;
+    hsnId: string | null;
+    hsn: { code: string; igstRate: number } | null;
     subcategoryId: string | null;
     brand: string;
     description: string;
@@ -382,6 +396,7 @@ export class CatalogService {
     b2bPriceInPaise: number | null;
     minimumB2BQuantity: number;
     allowB2BBackorder: boolean;
+    codAvailable: boolean;
     specifications: unknown;
     compareAtPriceInPaise: number | null;
     rating: number;
@@ -405,6 +420,7 @@ export class CatalogService {
       slug: record.slug,
       category: record.category.name as Product['category'],
       categoryId: record.categoryId,
+      ...(record.hsnId && record.hsn ? { hsnId: record.hsnId, hsnCode: record.hsn.code, gstRate: record.hsn.igstRate } : {}),
       ...(record.subcategoryId ? { subcategoryId: record.subcategoryId } : {}),
       brand: record.brand,
       description: record.description,
@@ -413,6 +429,7 @@ export class CatalogService {
       ...(record.b2bPriceInPaise !== null ? { b2bPriceInPaise: record.b2bPriceInPaise } : {}),
       minimumB2BQuantity: record.minimumB2BQuantity,
       allowB2BBackorder: record.allowB2BBackorder,
+      codAvailable: record.codAvailable,
       ...(specifications && typeof specifications === 'object' ? { specifications: specifications as Record<string, string | number | boolean> } : {}),
       ...(compareAtPriceInPaise ? { compareAtPriceInPaise } : {}),
       rating: record.rating,
@@ -426,7 +443,7 @@ export class CatalogService {
     };
   }
 
-  private toPublicProduct(product: AdminProduct, segment: CatalogSegment): Product {
+  private toPublicProduct(product: AdminProduct, segment: CatalogSegment, priceVisible = true): Product {
     const publicProduct: Partial<AdminProduct> = { ...product };
     delete publicProduct.active;
     publicProduct.priceInPaise = segment === 'B2B'
@@ -437,6 +454,13 @@ export class CatalogService {
       delete publicProduct.minimumB2BQuantity;
       delete publicProduct.allowB2BBackorder;
     }
+    if (!priceVisible) {
+      publicProduct.priceInPaise = 0;
+      delete publicProduct.b2cPriceInPaise;
+      delete publicProduct.b2bPriceInPaise;
+      delete publicProduct.compareAtPriceInPaise;
+    }
+    (publicProduct as Product).priceVisible = priceVisible;
     return publicProduct as Product;
   }
 
@@ -448,11 +472,32 @@ export class CatalogService {
     input: AdminProductInput,
     client: PrismaService | Prisma.TransactionClient = this.prisma,
   ) {
-    if (input.categoryId) return input.categoryId;
     const slug = this.slugify(input.category === 'PVC & Plumbing' ? 'Plumbing' : input.category);
+    if (input.categoryId) {
+      const category = await client.category.findUnique({ where: { id: input.categoryId }, select: { slug: true } });
+      if (!category || category.slug !== slug) {
+        throw new BadRequestException('The selected category does not match the category ID');
+      }
+      return input.categoryId;
+    }
     const category = await client.category.findUnique({ where: { slug }, select: { id: true } });
     if (!category) throw new BadRequestException(`Unknown category: ${input.category}`);
     return category.id;
+  }
+
+  private async validateSubcategoryForCategory(
+    subcategoryId: string | undefined,
+    categoryId: string,
+    client: PrismaService | Prisma.TransactionClient = this.prisma,
+  ) {
+    if (!subcategoryId) return;
+    const subcategory = await client.subcategory.findUnique({
+      where: { id: subcategoryId },
+      select: { categoryId: true },
+    });
+    if (!subcategory || subcategory.categoryId !== categoryId) {
+      throw new BadRequestException('The selected subcategory must belong to the selected category');
+    }
   }
 
   private async validateSubcategoryFilter(categoryIds?: string[], subcategoryIds?: string[]) {

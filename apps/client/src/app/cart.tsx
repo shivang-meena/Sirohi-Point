@@ -87,6 +87,19 @@ export default function CartScreen() {
   const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>('standard');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('COD');
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [shippingSameAsBilling, setShippingSameAsBilling] = useState(true);
+  const [selectedShippingAddressId, setSelectedShippingAddressId] = useState<string | null>(null);
+  const [addingShippingAddress, setAddingShippingAddress] = useState(false);
+  const [savingShippingAddress, setSavingShippingAddress] = useState(false);
+  const [shippingAddressName, setShippingAddressName] = useState('');
+  const [shippingHouseNumber, setShippingHouseNumber] = useState('');
+  const [shippingCompleteAddress, setShippingCompleteAddress] = useState('');
+  const [shippingCity, setShippingCity] = useState('');
+  const [shippingState, setShippingState] = useState('');
+  const [shippingPostalCode, setShippingPostalCode] = useState('');
+  const [shippingPhone, setShippingPhone] = useState('');
+  const [shippingAlternatePhone, setShippingAlternatePhone] = useState('');
+  const [shippingAddressLabel, setShippingAddressLabel] = useState<(typeof ADDRESS_LABEL_OPTIONS)[number]>('Home');
   const [addingAddress, setAddingAddress] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
   const [completeAddress, setCompleteAddress] = useState('');
@@ -118,15 +131,28 @@ export default function CartScreen() {
   const delivery = 0;
   const total = subtotal + 50;
   const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
+  const codAvailable = lines.length > 0 && lines.every(({ product }) => product.codAvailable !== false);
   const savedAddresses = addressesQuery.data ?? EMPTY_ADDRESSES;
   const selectedAddress = addingAddress ? null : savedAddresses.find((item) => item.id === selectedAddressId) ?? savedAddresses.find((item) => item.isDefault) ?? savedAddresses[0] ?? null;
+  const selectedShippingAddress = addingShippingAddress ? null : savedAddresses.find((item) => item.id === selectedShippingAddressId) ?? null;
   const showNewAddressForm = addingAddress || (!addressesQuery.isLoading && savedAddresses.length === 0);
+  const showNewShippingAddressForm = addingShippingAddress || (!addressesQuery.isLoading && savedAddresses.length === 0);
 
   useEffect(() => {
     if (!showNewAddressForm) return;
     setAddressName((value) => value || user?.name || '');
     setAddressPhone((value) => value || user?.phone || '');
   }, [showNewAddressForm, user?.name, user?.phone]);
+
+  useEffect(() => {
+    if (!showNewShippingAddressForm) return;
+    setShippingAddressName((value) => value || user?.name || '');
+    setShippingPhone((value) => value || user?.phone || '');
+  }, [showNewShippingAddressForm, user?.name, user?.phone]);
+
+  useEffect(() => {
+    if (!codAvailable && paymentMethod === 'COD') setPaymentMethod('ONLINE');
+  }, [codAvailable, paymentMethod]);
 
   async function completeRazorpayPayment(response: RazorpayCheckoutSuccess, razorpayOrderId: string, deliveryAddress: string) {
     if (!token || response.razorpay_order_id !== razorpayOrderId) {
@@ -165,11 +191,11 @@ export default function CartScreen() {
 
   async function saveNewAddress(): Promise<CustomerAddress | null> {
     if (user?.role !== 'CUSTOMER' || !token) {
-      showNotice('Sign in before adding a delivery address.');
+      showNotice('Sign in before adding a billing address.');
       return null;
     }
     if (completeAddress.trim().length < 10) {
-      showNotice('Please enter a complete delivery address.');
+      showNotice('Please enter a complete billing address.');
       return null;
     }
     if (city.trim().length < 2) {
@@ -205,13 +231,47 @@ export default function CartScreen() {
       setPostalCode('');
       setAddressPhone('');
       setAlternateAddressPhone('');
-      showNotice('Address saved and selected for delivery.');
+      showNotice('Address saved and selected for billing.');
       return saved;
     } catch (reason) {
       showNotice(reason instanceof Error ? reason.message : 'Unable to save this address.');
       return null;
     } finally {
       setSavingAddress(false);
+    }
+  }
+
+  async function saveNewShippingAddress(): Promise<CustomerAddress | null> {
+    if (user?.role !== 'CUSTOMER' || !token) return null;
+    if (shippingCompleteAddress.trim().length < 10 || shippingCity.trim().length < 2 || !shippingPostalCode.trim()) {
+      showNotice('Please complete the shipping address, city, and PIN code.');
+      return null;
+    }
+    setSavingShippingAddress(true);
+    try {
+      const saved = await saveCustomerAddress(token, {
+        label: shippingAddressLabel,
+        name: shippingAddressName.trim() || undefined,
+        line1: shippingCompleteAddress.trim(),
+        houseNumber: shippingHouseNumber.trim() || undefined,
+        city: shippingCity.trim(),
+        state: shippingState || undefined,
+        postalCode: shippingPostalCode.trim(),
+        ...(shippingPhone.trim() ? { phone: shippingPhone.trim() } : {}),
+        ...(shippingAlternatePhone.trim() ? { alternatePhone: shippingAlternatePhone.trim() } : {}),
+        isDefault: false,
+      });
+      await addressesQuery.refetch();
+      setSelectedShippingAddressId(saved.id);
+      setAddingShippingAddress(false);
+      setShippingCompleteAddress(''); setShippingAddressName(''); setShippingHouseNumber(''); setShippingCity(''); setShippingState(''); setShippingPostalCode(''); setShippingPhone(''); setShippingAlternatePhone('');
+      showNotice('Shipping address saved and selected.');
+      return saved;
+    } catch (reason) {
+      showNotice(reason instanceof Error ? reason.message : 'Unable to save this shipping address.');
+      return null;
+    } finally {
+      setSavingShippingAddress(false);
     }
   }
 
@@ -225,14 +285,25 @@ export default function CartScreen() {
     let chosenAddress = selectedAddress;
     if (!chosenAddress && showNewAddressForm) chosenAddress = await saveNewAddress();
     if (!chosenAddress) {
-      showNotice('Please choose or add a delivery address.');
+      showNotice('Please choose or add a billing address.');
       return;
     }
-    const deliveryAddress = formatDeliveryAddress(chosenAddress);
+    const billingAddress = formatDeliveryAddress(chosenAddress);
+    let chosenShippingAddress = selectedShippingAddress;
+    if (!shippingSameAsBilling && !chosenShippingAddress && showNewShippingAddressForm) chosenShippingAddress = await saveNewShippingAddress();
+    if (!shippingSameAsBilling && !chosenShippingAddress) { showNotice('Please choose or add a shipping address.'); return; }
+    const resolvedShippingAddress = shippingSameAsBilling ? billingAddress : formatDeliveryAddress(chosenShippingAddress!);
+    if (paymentMethod === 'COD' && !codAvailable) {
+      showNotice('Cash on delivery is unavailable for one or more products in your cart.');
+      setPaymentMethod('ONLINE');
+      return;
+    }
     setSubmitting(true);
     try {
       const input = {
-        deliveryAddress,
+        billingAddress,
+        shippingSameAsBilling,
+        ...(shippingSameAsBilling ? {} : { shippingAddress: resolvedShippingAddress }),
         paymentMethod,
         items: lines.map(({ product, quantity }) => ({ productId: product.id, quantity })),
       };
@@ -250,7 +321,7 @@ export default function CartScreen() {
           order_id: payment.razorpayOrderId,
           prefill: { name: user.name, email: user.email, contact: user.phone ?? undefined },
           theme: { color: '#0F766E' },
-          handler: (response) => void completeRazorpayPayment(response, payment.razorpayOrderId, deliveryAddress),
+          handler: (response) => void completeRazorpayPayment(response, payment.razorpayOrderId, resolvedShippingAddress),
           modal: { ondismiss: () => setSubmitting(false) },
         });
         checkout.on('payment.failed', () => {
@@ -266,7 +337,7 @@ export default function CartScreen() {
         itemCount,
         deliveryMode,
         paymentMethod,
-        address: deliveryAddress,
+        address: resolvedShippingAddress,
         items: lines.map(({ product, quantity }) => ({
           productId: product.id,
           name: product.name,
@@ -369,12 +440,12 @@ export default function CartScreen() {
               )}
 
               <View style={styles.fulfilmentCard}>
-                <View style={styles.deliveryHeader}><View><Text style={styles.panelTitle}>Delivery options</Text><Text style={styles.deliveryCopy}>Choose a saved address or add a new one.</Text></View>{savedAddresses.length > 0 && !showNewAddressForm ? <Pressable accessibilityRole="button" style={styles.addAddressButton} onPress={() => setAddingAddress(true)}><Text style={styles.addAddressText}>+ Add new address</Text></Pressable> : null}</View>
+                <View style={styles.deliveryHeader}><View><Text style={styles.panelTitle}>Billing address</Text><Text style={styles.deliveryCopy}>Choose a saved billing address or add a new one.</Text></View>{savedAddresses.length > 0 && !showNewAddressForm ? <Pressable accessibilityRole="button" style={styles.addAddressButton} onPress={() => setAddingAddress(true)}><Text style={styles.addAddressText}>+ Add new address</Text></Pressable> : null}</View>
                 {addressesQuery.isLoading ? <Text style={styles.deliveryCopy}>Loading your saved addresses…</Text> : null}
                 {addressesQuery.isError ? <Text style={styles.addressError}>Unable to load saved addresses. You can add a new address below.</Text> : null}
                 {savedAddresses.length ? <View style={styles.addressOptions}>{savedAddresses.map((savedAddress) => <SavedAddressOption key={savedAddress.id} address={savedAddress} selected={!showNewAddressForm && selectedAddress?.id === savedAddress.id} onPress={() => { setSelectedAddressId(savedAddress.id); setAddingAddress(false); }} styles={styles} />)}</View> : null}
                 {showNewAddressForm ? <View style={styles.newAddressForm}>
-                  <Text style={styles.newAddressTitle}>Add new delivery address</Text>
+                  <Text style={styles.newAddressTitle}>Add new billing address</Text>
                   <AddressSelect label="LABEL" value={addressLabel} options={ADDRESS_LABEL_OPTIONS} onChange={setAddressLabel} styles={styles} />
                   <Text style={styles.fieldLabel}>CONTACT NAME</Text>
                   <TextInput value={addressName} onChangeText={setAddressName} accessibilityLabel="Delivery contact name" placeholder="Recipient name" placeholderTextColor={styles.inputPlaceholder.color} autoCapitalize="words" style={styles.singleLineInput} />
@@ -393,6 +464,8 @@ export default function CartScreen() {
                   <TextInput value={completeAddress} onChangeText={setCompleteAddress} accessibilityLabel="Street, area and landmark" placeholder="Street, area and landmark" placeholderTextColor={styles.inputPlaceholder.color} multiline style={styles.addressInput} />
                   <View style={styles.addressFormActions}><Pressable accessibilityRole="button" disabled={savingAddress} style={[styles.saveAddressButton, savingAddress && styles.disabled]} onPress={() => void saveNewAddress()}>{savingAddress ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.saveAddressText}>Save &amp; use this address</Text>}</Pressable>{savedAddresses.length ? <Pressable accessibilityRole="button" disabled={savingAddress} style={styles.cancelAddressButton} onPress={() => setAddingAddress(false)}><Text style={styles.cancelAddressText}>Cancel</Text></Pressable> : null}</View>
                 </View> : null}
+                <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: shippingSameAsBilling }} onPress={() => setShippingSameAsBilling((value) => !value)} style={styles.sameAddressOption}><View style={[styles.checkbox, shippingSameAsBilling && styles.checkboxChecked]}>{shippingSameAsBilling ? <Text style={styles.checkboxTick}>✓</Text> : null}</View><View style={styles.sameAddressCopy}><Text style={styles.sameAddressTitle}>Shipping address same as billing address</Text><Text style={styles.deliveryCopy}>Uncheck to enter a different shipping address.</Text></View></Pressable>
+                {!shippingSameAsBilling ? <View style={styles.shippingAddressForm}><View style={styles.deliveryHeader}><View><Text style={styles.newAddressTitle}>Shipping address</Text><Text style={styles.deliveryCopy}>Choose a saved address or add a new one.</Text></View>{savedAddresses.length > 0 && !showNewShippingAddressForm ? <Pressable accessibilityRole="button" style={styles.addAddressButton} onPress={() => setAddingShippingAddress(true)}><Text style={styles.addAddressText}>+ Add new address</Text></Pressable> : null}</View>{savedAddresses.map((savedAddress) => <SavedAddressOption key={`shipping-${savedAddress.id}`} address={savedAddress} selected={!showNewShippingAddressForm && selectedShippingAddress?.id === savedAddress.id} onPress={() => { setSelectedShippingAddressId(savedAddress.id); setAddingShippingAddress(false); }} styles={styles} />)}{showNewShippingAddressForm ? <View style={styles.newAddressForm}><Text style={styles.newAddressTitle}>Add new shipping address</Text><AddressSelect label="LABEL" value={shippingAddressLabel} options={ADDRESS_LABEL_OPTIONS} onChange={setShippingAddressLabel} styles={styles} /><Text style={styles.fieldLabel}>CONTACT NAME</Text><TextInput value={shippingAddressName} onChangeText={setShippingAddressName} accessibilityLabel="Shipping contact name" placeholder="Recipient name" placeholderTextColor={styles.inputPlaceholder.color} autoCapitalize="words" style={styles.singleLineInput} /><Text style={styles.fieldLabel}>FLAT / HOUSE / BUILDING</Text><TextInput value={shippingHouseNumber} onChangeText={setShippingHouseNumber} accessibilityLabel="Shipping house or building" placeholder="Flat/House/building name" placeholderTextColor={styles.inputPlaceholder.color} style={styles.singleLineInput} /><View style={styles.addressFieldRow}><View style={styles.shortAddressField}><Text style={styles.fieldLabel}>CITY</Text><TextInput value={shippingCity} onChangeText={setShippingCity} accessibilityLabel="Shipping city" placeholder="City" placeholderTextColor={styles.inputPlaceholder.color} autoCapitalize="words" style={styles.singleLineInput} /></View><View style={styles.shortAddressField}><Text style={styles.fieldLabel}>PIN CODE</Text><TextInput value={shippingPostalCode} onChangeText={setShippingPostalCode} accessibilityLabel="Shipping PIN code" placeholder="PIN code" placeholderTextColor={styles.inputPlaceholder.color} keyboardType="number-pad" style={styles.singleLineInput} /></View><View style={styles.shortAddressField}><AddressSelect label="STATE" value={shippingState} options={INDIAN_STATE_OPTIONS} onChange={setShippingState} styles={styles} /></View></View><View style={styles.addressFieldRow}><View style={styles.shortAddressField}><Text style={styles.fieldLabel}>PRIMARY PHONE</Text><TextInput value={shippingPhone} onChangeText={setShippingPhone} accessibilityLabel="Shipping phone number" placeholder="Your phone number" placeholderTextColor={styles.inputPlaceholder.color} keyboardType="phone-pad" style={styles.singleLineInput} /></View><View style={styles.shortAddressField}><Text style={styles.fieldLabel}>ALTERNATIVE PHONE (OPTIONAL)</Text><TextInput value={shippingAlternatePhone} onChangeText={setShippingAlternatePhone} accessibilityLabel="Shipping alternative phone" placeholder="Backup number" placeholderTextColor={styles.inputPlaceholder.color} keyboardType="phone-pad" style={styles.singleLineInput} /></View></View><Text style={styles.fieldLabel}>STREET / AREA / LANDMARK</Text><TextInput value={shippingCompleteAddress} onChangeText={setShippingCompleteAddress} accessibilityLabel="Shipping street, area and landmark" placeholder="Street, area and landmark" placeholderTextColor={styles.inputPlaceholder.color} multiline style={styles.addressInput} /><View style={styles.addressFormActions}><Pressable accessibilityRole="button" disabled={savingShippingAddress} style={[styles.saveAddressButton, savingShippingAddress && styles.disabled]} onPress={() => void saveNewShippingAddress()}>{savingShippingAddress ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.saveAddressText}>Save &amp; use this address</Text>}</Pressable>{savedAddresses.length ? <Pressable accessibilityRole="button" disabled={savingShippingAddress} style={styles.cancelAddressButton} onPress={() => setAddingShippingAddress(false)}><Text style={styles.cancelAddressText}>Cancel</Text></Pressable> : null}</View></View> : null}</View> : null}
               </View>
             </View>
 
@@ -401,17 +474,17 @@ export default function CartScreen() {
               <SummaryRow label={`Subtotal (${itemCount} item${itemCount === 1 ? '' : 's'})`} value={formatMoney(subtotal)} />
               <SummaryRow label={deliveryMode === 'express' ? 'Express delivery' : 'Delivery charges'} value={formatMoney(50)} />
               <View style={styles.totalRow}><Text style={styles.totalLabel}>Total amount</Text><Text style={styles.totalValue}>{formatMoney(total)}</Text></View>
-              <Text style={styles.savingsNote}>Delivery timing is confirmed by admin.</Text>
 
               <Text style={styles.fieldLabel}>PAYMENT METHOD</Text>
               <View style={styles.paymentRow}>
-                <Pressable onPress={() => setPaymentMethod('COD')} style={[styles.paymentButton, paymentMethod === 'COD' && styles.paymentActive]}>
+                {codAvailable ? <Pressable onPress={() => setPaymentMethod('COD')} style={[styles.paymentButton, paymentMethod === 'COD' && styles.paymentActive]}>
                   <Text style={[styles.paymentText, paymentMethod === 'COD' && styles.paymentTextActive]}>Pay on delivery</Text>
-                </Pressable>
+                </Pressable> : null}
                 <Pressable onPress={() => setPaymentMethod('ONLINE')} style={[styles.paymentButton, paymentMethod === 'ONLINE' && styles.paymentActive]}>
                   <Text style={[styles.paymentText, paymentMethod === 'ONLINE' && styles.paymentTextActive]}>Pay with Razorpay</Text>
                 </Pressable>
               </View>
+              {!codAvailable ? <Text style={styles.savingsNote}>Cash on delivery is unavailable for one or more products in this cart. Online payment is available.</Text> : null}
               <Pressable accessibilityRole="button" disabled={submitting || savingAddress} style={[styles.primaryButton, (submitting || savingAddress) && styles.disabled]} onPress={() => void confirmOrder()}>
                 {submitting || savingAddress ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryText}>{paymentMethod === 'ONLINE' ? 'Continue to Razorpay' : 'Place order'}</Text>}
               </Pressable>
@@ -514,6 +587,13 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   savedAddressLine: { color: colors.cream, fontSize: 13, fontWeight: '700', lineHeight: 19 },
   savedAddressMeta: { color: colors.muted, fontSize: 11.5, lineHeight: 18 },
   savedAddressPhone: { color: colors.muted, fontSize: 11.5, lineHeight: 18 },
+  sameAddressOption: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, paddingTop: spacing.sm },
+  checkbox: { width: 22, height: 22, borderRadius: 5, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
+  checkboxChecked: { backgroundColor: colors.teal, borderColor: colors.teal },
+  checkboxTick: { color: '#FFFFFF', fontWeight: '900', fontSize: 14 },
+  sameAddressCopy: { flex: 1, gap: 2 },
+  sameAddressTitle: { color: colors.cream, fontSize: 13, fontWeight: '800' },
+  shippingAddressForm: { paddingTop: spacing.xs, gap: spacing.xs },
   newAddressForm: { width: '100%', alignSelf: 'stretch', padding: spacing.md, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.teal, backgroundColor: colors.surfaceSunken, gap: spacing.sm },
   newAddressTitle: { color: colors.cream, fontSize: 14, fontWeight: '900' },
   addressSelectField: { width: '100%', minWidth: 0, gap: 5 },

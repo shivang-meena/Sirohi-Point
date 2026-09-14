@@ -191,7 +191,7 @@ export default function CatalogScreen() {
           selectedSubcategoryIds={selectedSubcategoryIds}
           onCategoryIdsChange={setSelectedCategoryIds}
           onSubcategoryIdsChange={setSelectedSubcategoryIds}
-          onClearAll={() => { setSelectedCategoryIds([]); setSelectedSubcategoryIds([]); }}
+          onClearAll={resetDiscovery}
         />
 
         {catalog.isLoading ? (

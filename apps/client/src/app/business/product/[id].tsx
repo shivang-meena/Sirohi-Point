@@ -21,6 +21,7 @@ export default function BusinessProductScreen() {
   const liveProduct = useQuery({ queryKey: ['catalog', 'b2b', id], queryFn: () => getB2BProduct(token ?? undefined, id), enabled: Boolean(id) && (!user || (user.role === 'BUSINESS' && Boolean(token))) });
   const product = liveProduct.data;
   const minimum = product?.minimumB2BQuantity ?? 1;
+  const priceVisible = user?.role === 'BUSINESS' && Boolean(token) && product?.priceVisible !== false;
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
@@ -36,13 +37,13 @@ export default function BusinessProductScreen() {
     <View style={styles.columns}>
       <PortalCard style={styles.productCard}><ProductVisual product={product} /><View style={styles.productInfo}><Text style={styles.brand}>{product.brand}</Text><Text style={styles.name}>{product.name}</Text><Text style={styles.description}>{product.description}</Text></View></PortalCard>
       <PortalCard style={styles.buyCard} title="Make it part of your next order" copy="Your business price, with clear quantities and availability.">
-        <View style={styles.priceBlock}><Text style={styles.price}>{formatMoney(b2bPrice)}</Text><Text style={styles.priceLabel}>B2B unit price</Text></View>
+        {priceVisible ? <View style={styles.priceBlock}><Text style={styles.price}>{formatMoney(b2bPrice)}</Text><Text style={styles.priceLabel}>B2B unit price</Text></View> : <View style={styles.priceBlock}><PortalButton label="Reveal Price" onPress={() => router.push('/business/login' as never)} /><Text style={styles.priceLabel}>Sign in to see business pricing</Text></View>}
         <View style={styles.termRow}><Text style={styles.termLabel}>Minimum order quantity</Text><Text style={styles.termValue}>{minimum} units</Text></View>
         <View style={styles.termRow}><Text style={styles.termLabel}>Available quantity</Text><Text style={styles.termValue}>{product.stock} units</Text></View>
         <StatusBadge label={product.allowB2BBackorder ? 'More than stock can be requested' : 'Order within available stock'} tone={product.allowB2BBackorder ? 'warning' : 'success'} />
         <View style={styles.quantityRow}><Text style={styles.termLabel}>Order quantity</Text><View style={styles.quantityControls}><Pressable accessibilityRole="button" accessibilityLabel="Decrease order quantity" disabled={quantity <= minimum} accessibilityState={{ disabled: quantity <= minimum }} onPress={() => setQuantity((value) => Math.max(minimum, value - 1))} style={styles.quantityButton}><Text style={styles.quantityText}>−</Text></Pressable><Text style={styles.quantityValue}>{quantity}</Text><Pressable accessibilityRole="button" accessibilityLabel="Increase order quantity" onPress={() => setQuantity((value) => value + 1)} style={styles.quantityButton}><Text style={styles.quantityText}>+</Text></Pressable></View></View>
-        <View style={styles.totalRow}><Text style={styles.termLabel}>Estimated subtotal</Text><Text style={styles.total}>{formatMoney(total)}</Text></View>
-        <PortalButton label={!product.allowB2BBackorder && product.stock < minimum ? 'Insufficient stock' : 'Add to bulk cart'} disabled={!product.allowB2BBackorder && quantity > product.stock} onPress={() => addToCart(product, quantity)} />
+        {priceVisible ? <View style={styles.totalRow}><Text style={styles.termLabel}>Estimated subtotal</Text><Text style={styles.total}>{formatMoney(total)}</Text></View> : null}
+        {priceVisible ? <PortalButton label={!product.allowB2BBackorder && product.stock < minimum ? 'Insufficient stock' : 'Add to bulk cart'} disabled={!product.allowB2BBackorder && quantity > product.stock} onPress={() => addToCart(product, quantity)} /> : null}
         <PortalButton label="Open bulk cart" secondary onPress={() => router.push('/business/cart' as never)} />
       </PortalCard>
     </View>

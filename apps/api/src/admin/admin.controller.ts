@@ -7,14 +7,20 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { randomUUID } from 'node:crypto';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { extname, resolve } from 'node:path';
+import type { Request } from 'express';
 import {
   adminBannerInputSchema,
   adminProductInputSchema,
+  adminHsnInputSchema,
   orderCancellationSchema,
   orderRejectionSchema,
   orderStatusUpdateSchema,
@@ -42,6 +48,19 @@ export class AdminController {
   async products() {
     return { data: await this.admin.listProducts() };
   }
+
+  @Get('hsn-master')
+  async hsnMaster() {
+    return { data: await this.admin.listHsnMaster() };
+  }
+
+  @Post('hsn-master')
+  async createHsn(@Body() body: unknown) {
+    const parsed = adminHsnInputSchema.safeParse(body);
+    if (!parsed.success) throw new BadRequestException(parsed.error.flatten());
+    return { data: await this.admin.createHsnMaster(parsed.data) };
+  }
+
 
   @Post('products')
   async createProduct(@Body() body: unknown) {
@@ -205,11 +224,13 @@ export class AdminController {
     FileInterceptor('file', { limits: { fileSize: 3 * 1024 * 1024 } }),
   )
   upload(
+    @Req() request: Request,
     @UploadedFile()
     file?: {
       mimetype: string;
       size: number;
       buffer: Buffer;
+      originalname: string;
     },
   ) {
     if (!file || !file.mimetype.startsWith('image/')) {
@@ -217,9 +238,17 @@ export class AdminController {
         'Choose a PNG, JPEG, WebP or other image file',
       );
     }
+    const uploadsDirectory = resolve(process.cwd(), 'uploads');
+    mkdirSync(uploadsDirectory, { recursive: true });
+    const extension = extname(file.originalname).toLowerCase() ||
+      (file.mimetype === 'image/png' ? '.png' : file.mimetype === 'image/webp' ? '.webp' : '.jpg');
+    const filename = `${Date.now()}-${randomUUID()}${extension}`;
+    writeFileSync(resolve(uploadsDirectory, filename), file.buffer);
+    const configuredPublicUrl = process.env.PUBLIC_API_URL?.replace(/\/$/, '');
+    const publicBaseUrl = configuredPublicUrl || `${request.protocol}://${request.get('host')}`;
     return {
       data: {
-        url: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+        url: `${publicBaseUrl}/uploads/${filename}`,
         size: file.size,
       },
     };
