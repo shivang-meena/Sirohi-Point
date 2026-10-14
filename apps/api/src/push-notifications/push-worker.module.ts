@@ -1,0 +1,2 @@
+import { Module } from '@nestjs/common'; import { ScheduleModule } from '@nestjs/schedule'; import { PrismaModule } from '../prisma/prisma.module'; import { FcmService } from './fcm.service'; import { PushNotificationsService } from './push-notifications.service'; import { PushWorkerSchedulerService } from './push-worker-scheduler.service';
+@Module({ imports: [ScheduleModule.forRoot(), PrismaModule], providers: [FcmService, PushNotificationsService, PushWorkerSchedulerService] }) export class PushWorkerModule {}

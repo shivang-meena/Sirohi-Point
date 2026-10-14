@@ -1,0 +1,127 @@
+# Keep only the API app under apps/ in Git
+/apps/*/
+!/apps/api/
+!/apps/api/**
+
+# Dependencies and package-manager state
+**/node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.yarn/install-state.gz
+.yarn/build-state.yml
+**/.npm/
+/.npm-cache/
+**/.pnpm-debug.log*
+
+# Environment files and local secrets
+.env*
+!.env.example
+!**/.env.example
+.envrc
+**/.direnv/
+**/google-services.json
+**/GoogleService-Info.plist
+*.pem
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Build output
+**/dist/
+**/build/
+**/out/
+**/.next/
+/.vinext/
+**/web-build/
+**/.expo/
+**/.expo-shared/
+**/.eas/
+**/.vercel/
+**/.wrangler/
+*.jsbundle
+*.apk
+*.aab
+*.apks
+*.ipa
+
+# Expo / React Native / Android / iOS generated files
+**/.metro-health-check*
+**/.gradle/
+**/.kotlin/
+**/.cxx/
+**/local.properties
+**/*.iml
+**/ios/Pods/
+**/ios/build/
+**/ios/DerivedData/
+**/ios/xcuserdata/
+
+# API runtime uploads (generated at runtime)
+/apps/api/uploads/
+
+# Test, coverage, and local database files
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/.nyc_output/
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.db
+*.db-*
+
+# Logs, crash dumps, and temporary files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+hs_err_pid*.log
+replay_pid*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.swp
+*.swo
+
+# TypeScript and tooling caches
+*.tsbuildinfo
+**/next-env.d.ts
+**/expo-env.d.ts
+**/.turbo/
+**/.cache/
+**/.parcel-cache/
+**/.vite/
+**/.eslintcache
+
+# IDE and OS files
+.idea/
+.vscode/
+.kilo/
+/.agents/
+/.codex/
+/.aws/
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local workspace folders
+/outputs/
+/work/
+
+# AAB/APKS inspection artifacts
+/aab-size-check/*.aab
+/aab-size-check/*.apks
+/aab-size-check/bundletool-all-*.jar
+
