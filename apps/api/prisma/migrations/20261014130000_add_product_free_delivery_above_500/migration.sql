@@ -1,0 +1,2 @@
+ALTER TABLE "Product"
+ADD COLUMN "freeDeliveryAbove500" BOOLEAN NOT NULL DEFAULT false;
