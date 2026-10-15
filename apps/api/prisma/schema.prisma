@@ -117,6 +117,7 @@ enum PushAppKind {
 enum PushAudience {
   CUSTOMER
   B2B
+  BOTH
 }
 
 enum PushCampaignStatus {

@@ -1,0 +1,1 @@
+ALTER TYPE "PushAudience" ADD VALUE 'BOTH';

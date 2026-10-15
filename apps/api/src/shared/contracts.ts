@@ -14,13 +14,13 @@ export const adminPermissionKeys = [
   'businesses.view', 'businesses.approve', 'businesses.reject', 'businesses.reapprove',
   'serviceOffers.view', 'serviceOffers.create', 'serviceOffers.edit',
   'serviceRequests.view', 'serviceRequests.approve', 'serviceRequests.reject',
-  'notifications.view', 'notifications.create', 'notifications.edit', 'notifications.send', 'notifications.cancel',
+  'notifications.view', 'notifications.create', 'notifications.edit', 'notifications.send', 'notifications.cancel', 'notifications.delete',
 ] as const;
 export type AdminPermissionKey = (typeof adminPermissionKeys)[number];
 
 export const pushAppKinds = ['CUSTOMER_APP', 'B2B_APP'] as const;
 export type PushAppKind = (typeof pushAppKinds)[number];
-export const pushAudiences = ['CUSTOMER', 'B2B'] as const;
+export const pushAudiences = ['CUSTOMER', 'B2B', 'BOTH'] as const;
 export type PushAudience = (typeof pushAudiences)[number];
 export const pushCampaignStatuses = ['DRAFT', 'SCHEDULED', 'QUEUED', 'SENDING', 'SENT', 'PARTIALLY_SENT', 'FAILED', 'NO_RECIPIENTS', 'CANCELLED', 'EXPIRED'] as const;
 export type PushCampaignStatus = (typeof pushCampaignStatuses)[number];
