@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
 
 import { AdminModule } from './admin/admin.module';
@@ -14,10 +15,12 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { ReturnsModule } from './returns/returns.module';
 import { ServicesModule } from './services/services.module';
 import { PushNotificationsModule } from './push-notifications/push-notifications.module';
+import { PushWorkerSchedulerService } from './push-notifications/push-worker-scheduler.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     AddressesModule,
     AuthModule,
@@ -30,6 +33,9 @@ import { PushNotificationsModule } from './push-notifications/push-notifications
     PushNotificationsModule,
   ],
   controllers: [AppController],
-  providers: [{ provide: APP_FILTER, useClass: PrismaExceptionFilter }],
+  providers: [
+    { provide: APP_FILTER, useClass: PrismaExceptionFilter },
+    PushWorkerSchedulerService,
+  ],
 })
 export class AppModule {}
